@@ -73,6 +73,12 @@ task :test => [:compile] do
 	sh "packages/xunit.runner.console/tools/xunit.console.exe src/Baseline.Testing/bin/#{COMPILE_TARGET}/Baseline.Testing.dll"
 end
 
+desc "Pack up the nupkg file"
+task :pack => [:compile] do
+	Dir.mkdir "artifacts"
+	sh "paket.exe pack output artifacts version #{build_number}"
+end
+
 
 desc "Launches VS to the Marten solution file"
 task :sln do

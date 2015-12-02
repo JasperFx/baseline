@@ -1,0 +1,16 @@
+type file
+id Baseline
+description Grab bag of generic utilities and extension methods for .Net development
+authors Jeremy D. Miller, Brandon Behrens, Andrew Kharlamov
+title Baseline
+owners Jeremy D. Miller, Chad Myers, Joshua Arnold, Joshua Flanagan
+licenseUrl https://github.com/JasperFX/Baseline/blob/master/LICENSE.txt
+projectUrl https://github.com/JasperFX/Baseline
+version 3.0.0
+
+files
+    bin\release\Baseline.dll ==> lib/net45
+
+dependencies
+
+     
