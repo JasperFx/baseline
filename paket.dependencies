@@ -1,0 +1,4 @@
+source https://nuget.org/api/v2
+nuget Shouldly
+nuget xunit
+nuget xunit.runner.console
