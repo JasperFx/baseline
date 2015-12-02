@@ -263,12 +263,11 @@ namespace Baseline.Testing
             return new string[0];
         }
 
-        // Only here for mocking/stubbing file system junk
         public IEnumerable<string> FindFiles(string directory, FileSet searchSpecification)
         {
-            var excluded = searchSpecification.ExcludedFilesFor(directory);
+            var excluded = searchSpecification.ExcludedFilesFor(directory).ToArray();
             var files = searchSpecification.IncludedFilesFor(directory).ToList();
-            files.RemoveAll(excluded.Contains);
+            files.RemoveAll(s => excluded.Contains(s));
 
             return files;
         }
