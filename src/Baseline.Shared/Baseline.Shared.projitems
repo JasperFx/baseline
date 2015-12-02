@@ -9,5 +9,26 @@
     <Import_RootNamespace>Baseline</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Cache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConcurrentCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DictionaryExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DisposableExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EnumerableExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FileHashingExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FileSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FileSystemExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatFileWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IFileSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IFlatFileWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NumberExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ReaderWriterLockExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StackFrameExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StreamExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StringExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TimeSpanExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TypeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UrlExtensions.cs" />
   </ItemGroup>
 </Project>
