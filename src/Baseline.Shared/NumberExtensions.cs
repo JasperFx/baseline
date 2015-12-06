@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Baseline.Testing
+namespace Baseline
 {
     public static class NumberExtensions
     {

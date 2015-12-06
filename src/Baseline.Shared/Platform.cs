@@ -1,6 +1,6 @@
 using System;
 
-namespace Baseline.Testing
+namespace Baseline
 {
 	public static class Platform
 	{

@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Baseline.Testing
+namespace Baseline
 {
     [Serializable]
     public class ConcurrentCache<TKey, TValue> : IEnumerable<TValue>

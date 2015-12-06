@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Baseline.Testing
+namespace Baseline
 {
     public static class StringExtensions
     {

@@ -61,7 +61,12 @@
     <Compile Include="TypeExtensionsTester.cs" />
     <Compile Include="UrlExtensionsTester.cs" />
   </ItemGroup>
-  <Import Project="..\Baseline.Shared\Baseline.Shared.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\Baseline.Net46\Baseline.Net46.csproj">
+      <Project>{61dada9d-6232-4478-9da3-915055d47574}</Project>
+      <Name>Baseline.Net46</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v2.0' Or $(TargetFrameworkVersion) == 'v3.0' Or $(TargetFrameworkVersion) == 'v3.5' Or $(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6')">

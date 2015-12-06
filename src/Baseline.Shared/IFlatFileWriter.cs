@@ -1,4 +1,4 @@
-namespace Baseline.Testing
+namespace Baseline
 {
     public interface IFlatFileWriter
     {

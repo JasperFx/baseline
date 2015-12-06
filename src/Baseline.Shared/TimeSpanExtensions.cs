@@ -1,9 +1,8 @@
 using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Baseline.Testing
+namespace Baseline
 {
     public static class TimeSpanExtensions
     {

@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Baseline.Testing
+namespace Baseline
 {
     public class FlatFileWriter : IFlatFileWriter
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Baseline.Testing
+namespace Baseline
 {
     public static class DictionaryExtensions
     {

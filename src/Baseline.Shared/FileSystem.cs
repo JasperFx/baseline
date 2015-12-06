@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Xml.Serialization;
 
-namespace Baseline.Testing
+namespace Baseline
 {
     public enum CopyBehavior
     {

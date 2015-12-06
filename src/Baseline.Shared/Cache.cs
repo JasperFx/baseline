@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Baseline.Testing
+namespace Baseline
 {
     [Serializable]
     public class Cache<TKey, TValue> : IEnumerable<TValue>

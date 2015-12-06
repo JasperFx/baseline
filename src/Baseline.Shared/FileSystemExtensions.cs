@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace Baseline.Testing
+namespace Baseline
 {
     public static class FileSystemExtensions
     {
