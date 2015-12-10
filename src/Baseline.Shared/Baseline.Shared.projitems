@@ -11,6 +11,13 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Cache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConcurrentCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversion\ArrayConversion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversion\Conversions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversion\DateTimeConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversion\EnumerationConversion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversion\IConversionProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversion\NullableConvertor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversion\StringConverterProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DictionaryExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DisposableExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EnumerableExtensions.cs" />
@@ -21,6 +28,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)FlatFileWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IFileSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IFlatFileWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LightweightCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NumberExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReaderWriterLockExtensions.cs" />

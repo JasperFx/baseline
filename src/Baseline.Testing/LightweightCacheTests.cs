@@ -8,10 +8,9 @@ using Xunit;
 
 namespace Baseline.Testing
 {
-    
-    public class CacheTester
+    public class LightweightCacheTests
     {
-        private Cache<string, int> cache = new Cache<string, int>();
+        private LightweightCache<string, int> cache = new LightweightCache<string, int>();
         private const string Key = "someKey";
         public interface ICallback
         {
@@ -19,37 +18,6 @@ namespace Baseline.Testing
             void OnAdditionCallback(int value);
         }
 
-        [Fact]
-        public void non_default_fill()
-        {
-            var count = 0;
-
-            cache.OnMissing = key => ++count;
-
-            cache.FillDefault("number");
-            cache["number"].ShouldBe(1);
-
-            cache.Fill("diff", key => 1000);
-
-            cache["diff"].ShouldBe(1000);
-        }
-
-        [Fact]
-        public void on_addition_should_fire_when_a_cache_adds_something_from_its_on_missing_catch()
-        {
-            var list = new List<int>();
-            int x = 0;
-
-            cache.OnMissing = key => ++x;
-
-            cache.OnAddition = number => list.Add(number);
-
-            cache["a"] = 100;
-            cache["b"].ShouldBe(1);
-            cache["c"].ShouldBe(2);
-        
-            list.ShouldHaveTheSameElementsAs(100, 1, 2);
-        }
 
         [Fact]
         public void when_GetKey_not_set_should_throw()
@@ -95,8 +63,8 @@ namespace Baseline.Testing
         public void get_all_keys()
         {
             cache.Fill(Key, 42);
-            cache.GetAllKeys().Count().ShouldBe(1);
-            cache.GetAllKeys().ShouldContain(Key);
+            cache.Count().ShouldBe(1);
+            cache.Has(Key).ShouldBeTrue();
         }
 
         [Fact]
@@ -116,18 +84,7 @@ namespace Baseline.Testing
             ICallback callback = MockRepository.GenerateStub<ICallback>();
             cache.GetKey = callback.GetKeyCallback;
             cache.GetKey(42);
-            callback.AssertWasCalled(c=>c.GetKeyCallback(42));
-        }
-
-        [Fact]
-        public void set_OnAddition()
-        {
-            ICallback callback = MockRepository.GenerateStub<ICallback>();
-            cache["firstKey"] = 0;
-            callback.AssertWasNotCalled(c => c.OnAdditionCallback(42));
-            cache.OnAddition = callback.OnAdditionCallback;
-            cache[Key] = 42;
-            callback.AssertWasCalled(c=>c.OnAdditionCallback(42));
+            callback.AssertWasCalled(c => c.GetKeyCallback(42));
         }
 
         [Fact]

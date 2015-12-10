@@ -43,8 +43,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assert.cs" />
-    <Compile Include="CacheTester.cs" />
+    <Compile Include="CacheTests.cs" />
     <Compile Include="ConcurrentCacheTester.cs" />
+    <Compile Include="Conversion\ConversionsTester.cs" />
+    <Compile Include="Conversion\DateTime_conversion_specs.cs" />
+    <Compile Include="Conversion\StringConverterProviderTester.cs" />
     <Compile Include="DictionaryExtensionsTester.cs" />
     <Compile Include="DisposableExtensionsTests.cs" />
     <Compile Include="FileHashingExtensionsTester.cs" />
@@ -53,6 +56,7 @@
     <Compile Include="FileSystemTester.cs" />
     <Compile Include="FlatFileWriterTester.cs" />
     <Compile Include="GenericEnumerableExtensionsTester.cs" />
+    <Compile Include="LightweightCacheTests.cs" />
     <Compile Include="NumberExtensionsTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\AccessorRulesTester.cs" />
