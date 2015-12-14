@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Baseline.Conversion
 {
@@ -11,14 +12,13 @@ namespace Baseline.Conversion
 
         public Conversions()
         {
+
+
             _convertors =
                 new LightweightCache<Type, Func<string, object>>(
                     type =>
                     {
-                        return
-                            _providers.UnionWith(new EnumerationConversion(), new NullableConvertor(this),
-                                new ArrayConversion(this), new StringConverterProvider())
-                                .FirstValue(x => x.ConverterFor(type));
+                        return providers().FirstValue(x => x.ConverterFor(type));
                     });
 
             RegisterConversion(bool.Parse);
@@ -45,6 +45,19 @@ namespace Baseline.Conversion
         }
 
 
+        private IEnumerable<IConversionProvider> providers()
+        {
+            foreach (var provider in _providers)
+            {
+                yield return provider;
+            }
+
+            yield return new EnumerationConversion();
+            yield return new NullableConvertor(this);
+            yield return new ArrayConversion(this);
+            yield return new StringConverterProvider();
+        } 
+
         public void RegisterConversionProvider<T>() where T : IConversionProvider, new()
         {
             _providers.Add(new T());
@@ -63,6 +76,11 @@ namespace Baseline.Conversion
         public object Convert(Type type, string raw)
         {
             return _convertors[type](raw);
+        }
+
+        public bool Has(Type type)
+        {
+            return _convertors.Has(type) || providers().Any(x => x.ConverterFor(type) != null);
         }
     }
 }

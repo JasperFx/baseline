@@ -109,6 +109,29 @@ namespace Baseline.Testing.Conversion
                 .Name.ShouldBe("Red");
         }
 
+        [Fact]
+        public void has_when_it_already_has_no_provider_lookup()
+        {
+            conversions.Has(typeof (string)).ShouldBeTrue();
+            conversions.Has(typeof (int)).ShouldBeTrue();
+            conversions.Has(typeof (double)).ShouldBeTrue();
+            conversions.Has(typeof (DateTime)).ShouldBeTrue();
+        }
+
+        [Fact]
+        public void has_when_it_could_be_discovered()
+        {
+            conversions.Has(typeof(double?)).ShouldBeTrue();
+        }
+
+        [Fact]
+        public void has_no_conversion_when_cannot_be_derived()
+        {
+            conversions.Has(GetType()).ShouldBeFalse();
+        }
+
+
+
         // ENDSAMPLE
     }
 
