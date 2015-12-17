@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Shouldly;
 using Xunit;
@@ -5,8 +6,16 @@ using Xunit;
 namespace Baseline.Testing
 {
     
-    public class FileHashingExtensionsTester
+    public class FileHashingExtensionsTester : IDisposable
     {
+        private readonly TestDirectory _testDirectory;
+
+        public FileHashingExtensionsTester()
+        {
+            _testDirectory = new TestDirectory();
+            _testDirectory.ChangeDirectory();
+        }
+
         [Fact]
         public void hash_by_modified_is_repeatable()
         {
@@ -74,6 +83,11 @@ namespace Baseline.Testing
 			var hash5 = new string[] { file2, file1, file3 }.HashByModifiedDate();
 
             hash5.ShouldNotBe(hash1);
+        }
+
+        public void Dispose()
+        {
+            _testDirectory.Dispose();
         }
     }
 }
