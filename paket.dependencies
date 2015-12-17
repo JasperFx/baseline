@@ -1,5 +1,0 @@
-source https://nuget.org/api/v2
-nuget RhinoMocks
-nuget Shouldly
-nuget xunit
-nuget xunit.runner.console

@@ -1,0 +1,16 @@
+﻿{
+  "version": "1.0.0-*",
+  "dependencies": {
+    "xunit": "2.1.0-rc1-*",
+    "xunit.runner.dnx": "2.1.0-rc1-*",
+    "Baseline": "0.5.0-alpha-*",
+    "Shouldly": "2.6.0",
+    "RhinoMocks": "3.6.1",
+  },
+  "commands": {
+    "test": "xunit.runner.dnx"
+  },
+  "frameworks": {
+    "dnx451": { }
+  }
+}

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,12 +8,15 @@ using Xunit;
 namespace Baseline.Testing
 {
     
-    public class FileSetTester
+    public class FileSetTester : IDisposable
     {
+        private readonly TestDirectory _testDirectory;
         private FileSet theFileSet;
 
         public FileSetTester()
         {
+            _testDirectory = new TestDirectory();
+            _testDirectory.ChangeDirectory();
             if (Directory.Exists("target"))
             {
                 Directory.Delete("target", true);
@@ -22,8 +26,6 @@ namespace Baseline.Testing
 
             theFileSet = new FileSet();
         }
-
-
 
         [Fact]
         public void append_include()
@@ -39,7 +41,7 @@ namespace Baseline.Testing
 
         private void writeFile(string name)
         {
-            name = Path.Combine("target", name).ToFullPath();
+            name = Path.Combine(Directory.GetCurrentDirectory(), "target", name).ToFullPath();
 
             var directory = Path.GetDirectoryName(name);
             if (!Directory.Exists(directory))
@@ -225,6 +227,11 @@ namespace Baseline.Testing
             var set = FileSet.ForAssemblyDebugFiles(names);
             set.Exclude.ShouldBeNull();
             set.Include.ShouldBe("a.pdb;b.pdb;c.pdb;d.pdb");
+        }
+
+        public void Dispose()
+        {
+            _testDirectory.Dispose();
         }
     }
 }

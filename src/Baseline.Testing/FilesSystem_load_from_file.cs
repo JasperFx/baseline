@@ -16,8 +16,16 @@ namespace Baseline.Testing
 	}
 	
 	
-	public class FilesSystem_load_from_file
+	public class FilesSystem_load_from_file : IDisposable
 	{
+	    private readonly TestDirectory _testDirectory;
+
+	    public FilesSystem_load_from_file()
+	    {
+            _testDirectory = new TestDirectory();
+            _testDirectory.ChangeDirectory();
+	    }
+
 		[Fact]
 		public void should_deserialize_xml()
 		{
@@ -50,7 +58,7 @@ namespace Baseline.Testing
 			var fileName = Path.GetTempFileName();
 			fileSystem.WriteStringToFile(fileName, "not xml!");
 
-            Exception<ApplicationException>.ShouldBeThrownBy(() => fileSystem.LoadFromFile<SerializeMe>(fileName));
+            Exception<Exception>.ShouldBeThrownBy(() => fileSystem.LoadFromFile<SerializeMe>(fileName));
 		}
 
 		[Fact]
@@ -59,8 +67,13 @@ namespace Baseline.Testing
 			var fileSystem = new FileSystem();
 			const string fileName = "does not exist";
 
-            Exception<ApplicationException>.ShouldBeThrownBy(() => fileSystem.LoadFromFileOrThrow<SerializeMe>(fileName));
+            Exception<Exception>.ShouldBeThrownBy(() => fileSystem.LoadFromFileOrThrow<SerializeMe>(fileName));
 		}
+
+	    public void Dispose()
+	    {
+            _testDirectory.Dispose();
+	    }
 	}
 
 	
@@ -72,7 +85,7 @@ namespace Baseline.Testing
 			var fileSystem = new FileSystem();
 			const string fileName = "does not exist";
 
-            Exception<ApplicationException>.ShouldBeThrownBy(() => fileSystem.LoadFromFileOrThrow<SerializeMe>(fileName));
+            Exception<Exception>.ShouldBeThrownBy(() => fileSystem.LoadFromFileOrThrow<SerializeMe>(fileName));
 		}
 	}
 }

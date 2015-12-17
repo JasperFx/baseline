@@ -8,8 +8,16 @@ using Xunit;
 namespace Baseline.Testing
 {
     
-    public class FileSystemTester
-    {      
+    public class FileSystemTester : IDisposable
+    {
+        private readonly TestDirectory _testDirectory;
+
+        public FileSystemTester()
+        {
+            _testDirectory = new TestDirectory();
+            _testDirectory.ChangeDirectory();
+        }      
+
         private string fullPath(params string[] paths)
         {
             return Path.GetFullPath(paths.Join(Path.DirectorySeparatorChar.ToString()));
@@ -111,16 +119,23 @@ namespace Baseline.Testing
 				ShouldBe("a{0}b{0}c{0}".ToFormat(Path.DirectorySeparatorChar));
         }
 
+        public void Dispose()
+        {
+            _testDirectory.Dispose();
+        }
     }
 
     
-    public class FileSystemIntegrationTester
+    public class FileSystemIntegrationTester : IDisposable
     {
+        private readonly TestDirectory _testDirectory;
         private FileSystem _fileSystem;
         private string _basePath;
 
         public FileSystemIntegrationTester()
         {
+            _testDirectory = new TestDirectory();
+            _testDirectory.ChangeDirectory();
             _fileSystem = new FileSystem();
             _basePath = Path.GetTempPath();
         }
@@ -244,16 +259,24 @@ namespace Baseline.Testing
                     FileSystem.Combine("f3", "a.txt")
                 );
         }
+
+        public void Dispose()
+        {
+            _testDirectory.Dispose();
+        }
     }
 
 
     
-    public class Searching_up_the_tree_for_a_dir
+    public class Searching_up_the_tree_for_a_dir : IDisposable
     {
+        private readonly TestDirectory _testDirectory;
         private IFileSystem _fileSystem;
 
         public Searching_up_the_tree_for_a_dir()
         {
+            _testDirectory = new TestDirectory();
+            _testDirectory.ChangeDirectory();
             _fileSystem = new FileSystem();
             _fileSystem.CreateDirectory("deep".AppendPath("a", "b", "c"));
             _fileSystem.CreateDirectory("deep".AppendPath("config"));
@@ -275,6 +298,11 @@ namespace Baseline.Testing
             var dir = _fileSystem.SearchUpForDirectory("deep".AppendPath("a","b","c").ToFullPath(), "conig");
 
             dir.ShouldBeNull();
+        }
+
+        public void Dispose()
+        {
+            _testDirectory.Dispose();
         }
     }
 
