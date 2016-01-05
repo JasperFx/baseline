@@ -5,7 +5,7 @@
     "DNX,Version=v4.5.1": {
       "Baseline/0.5.0-alpha": {
         "type": "project",
-        "framework": "DNX,Version=v4.5.1",
+        "framework": ".NETFramework,Version=v4.5.1",
         "frameworkAssemblies": [
           "System.Xml"
         ]
@@ -271,7 +271,7 @@
     "DNX,Version=v4.5.1/win7-x86": {
       "Baseline/0.5.0-alpha": {
         "type": "project",
-        "framework": "DNX,Version=v4.5.1",
+        "framework": ".NETFramework,Version=v4.5.1",
         "frameworkAssemblies": [
           "System.Xml"
         ]
@@ -537,7 +537,7 @@
     "DNX,Version=v4.5.1/win7-x64": {
       "Baseline/0.5.0-alpha": {
         "type": "project",
-        "framework": "DNX,Version=v4.5.1",
+        "framework": ".NETFramework,Version=v4.5.1",
         "frameworkAssemblies": [
           "System.Xml"
         ]
