@@ -76,7 +76,8 @@ end
 desc "Pack up the nupkg file"
 task :pack => [:restore] do
 	Dir.mkdir "artifacts"
-	sh "dnu pack src/Baseline --out ./artifacts --configuration #{COMPILE_TARGET}"
+    ENV["DNX_BUILD_VERSION"] = build_revision
+	sh "dnu pack src\\Baseline --out .\\artifacts --configuration #{COMPILE_TARGET}"
 end
 
 
