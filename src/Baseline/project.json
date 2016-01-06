@@ -1,5 +1,5 @@
 ﻿{
-  "version": "0.5.0-alpha-*",
+  "version": "0.5.1-alpha-*",
   "description": "Grab bag of generic utilities and extension methods for .Net development",
   "authors": [ "Jeremy D. Miller", "Brandon Behrens", "Andrew Kharlamov" ],
   "projectUrl": "https://github.com/JasperFX/Baseline",

@@ -3,7 +3,7 @@
   "version": 2,
   "targets": {
     "DNX,Version=v4.5.1": {
-      "Baseline/0.5.0-alpha": {
+      "Baseline/0.5.1-alpha": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
         "frameworkAssemblies": [
@@ -269,7 +269,7 @@
       }
     },
     "DNX,Version=v4.5.1/win7-x86": {
-      "Baseline/0.5.0-alpha": {
+      "Baseline/0.5.1-alpha": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
         "frameworkAssemblies": [
@@ -535,7 +535,7 @@
       }
     },
     "DNX,Version=v4.5.1/win7-x64": {
-      "Baseline/0.5.0-alpha": {
+      "Baseline/0.5.1-alpha": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
         "frameworkAssemblies": [
@@ -802,7 +802,7 @@
     }
   },
   "libraries": {
-    "Baseline/0.5.0-alpha": {
+    "Baseline/0.5.1-alpha": {
       "type": "project",
       "path": "../Baseline/project.json"
     },
