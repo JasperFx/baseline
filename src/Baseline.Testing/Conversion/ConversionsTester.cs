@@ -125,6 +125,16 @@ namespace Baseline.Testing.Conversion
         }
 
         [Fact]
+        public void can_handle_guids()
+        {
+            conversions.Has(typeof(Guid)).ShouldBeTrue();
+
+            var aGuid = Guid.NewGuid();
+            conversions.Convert(typeof(Guid), aGuid.ToString())
+                .ShouldBe(aGuid);
+        }
+
+        [Fact]
         public void has_no_conversion_when_cannot_be_derived()
         {
             conversions.Has(GetType()).ShouldBeFalse();

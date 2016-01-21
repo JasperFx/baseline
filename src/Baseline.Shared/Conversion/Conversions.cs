@@ -35,6 +35,7 @@ namespace Baseline.Conversion
             RegisterConversion(uint.Parse);
             RegisterConversion(ulong.Parse);
             RegisterConversion(DateTimeConverter.GetDateTime);
+            RegisterConversion(Guid.Parse);
 
             RegisterConversion(x =>
             {
