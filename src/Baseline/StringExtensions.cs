@@ -135,7 +135,7 @@ namespace Baseline
         /// </summary>
         public static string Capitalize(this string stringValue)
         {
-#if !DNXCORE50 && !DOTNET5_4
+#if NET451
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(stringValue);
 #else
             StringBuilder result = new StringBuilder(stringValue);

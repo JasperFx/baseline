@@ -12,23 +12,31 @@
         "System.Xml": "4.0.0.0"
       }
     },
-    "dotnet5.4": {
+    "netstandard1.3": {
       "dependencies": {
-        "System.Runtime": "4.0.21-beta-*",
-        "System.Runtime.Extensions": "4.0.11-beta-*",
-        "System.Linq": "4.0.1-beta-*",
-        "System.Linq.Expressions": "4.0.11-beta-*",
-        "System.Collections.Concurrent": "4.0.11-beta-*",
-        "System.Text.RegularExpressions": "4.0.11-beta-*",
-        "System.Xml.XmlSerializer": "4.0.11-beta-*",
-        "System.Reflection.Extensions": "4.0.1-beta-*",
-        "System.Reflection.TypeExtensions": "4.1.0-beta-*",
-        "System.Diagnostics.Process": "4.1.0-beta-*",
-        "System.Diagnostics.StackTrace": "4.0.1-beta-*",
-        "System.Threading.Thread": "4.0.0-beta-*",
-        "System.Globalization": "4.0.11-beta-*",
-        "System.Security.Cryptography.Algorithms": "4.0.0-beta-*"
-      }
+        "System.Runtime": "4.1.0-rc2-24027",
+        "System.Runtime.Extensions": "4.1.0-rc2-24027",
+        "System.Runtime.InteropServices": "4.1.0-rc2-24027",
+        "System.IO.FileSystem": "4.0.1-rc2-24027",
+        "System.Linq": "4.1.0-rc2-24027",
+        "System.Linq.Expressions": "4.0.11-rc2-24027",
+        "System.Collections.Concurrent": "4.0.12-rc2-24027",
+        "System.Text.RegularExpressions": "4.0.12-rc2-24027",
+        "System.Xml.XmlSerializer": "4.0.11-rc2-24027",
+        "System.Reflection.Extensions": "4.0.1-rc2-24027",
+        "System.Reflection.TypeExtensions": "4.1.0-rc2-24027",
+        "System.Diagnostics.Debug": "4.0.11-rc2-24027",
+        "System.Diagnostics.Process": "4.1.0-rc2-24027",
+        "System.Diagnostics.StackTrace": "4.0.1-rc2-24027",
+        "System.Threading": "4.0.11-rc2-24027",
+        "System.Threading.Thread": "4.0.0-rc2-24027",
+        "System.Globalization": "4.0.11-rc2-24027",
+        "System.Security.Cryptography.Algorithms": "4.1.0-rc2-24027"
+      },
+      "imports": [
+        "dnxcore50",
+        "portable-net45+win8"
+      ]
     }
   }
 }

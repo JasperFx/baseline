@@ -17,20 +17,18 @@ task :clean do
 end
 
 task :install do
-    if which("dnvm").nil?
-	  puts "dnvm not found, starting install"
+    if which("dotnet").nil?
+	  puts "dotnet cli not found"
 	  if Gem.win_platform?
-	    puts "installing dnvm for Windows OS"
-		sh "@powershell -NoProfile -ExecutionPolicy unrestricted -Command \"&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}\""
+      raise 'dotnet not found on Windows, must install sdk first'
 	  else
-	    puts "installing dnvm for *nix systems"
-		sh "curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh"
+	    puts "installing dotnet for *nix systems"
+      sh 'curl -sSL https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0-preview1/scripts/obtain/dotnet-install.sh | bash /dev/stdin --version 1.0.0-preview1-002702 --install-dir ~/dotnet'
+      sh 'sudo ln -s ~/dotnet/dotnet /usr/local/bin'
 	  end
 	else
-	  puts "dnvm found, skipping install"
+	  puts 'dotnet cli found'
 	end
-    sh "dnvm install 1.0.0-rc1-update1 -arch x64 -r clr"
-	sh "dnvm use 1.0.0-rc1-update1 -arch x64 -r clr -p"
 end
 
 desc "Update the version information for the build"
@@ -65,19 +63,19 @@ end
 
 desc 'Restore the packages'
 task :restore => [:clean, :install] do
-  sh "dnu restore"
+  sh 'dotnet restore'
 end
 
 desc 'Run the unit tests'
 task :test => [:restore] do
-	sh "dnx -p src/Baseline.Testing test"
+	sh 'dotnet test src/Baseline.Testing'
 end
 
 desc "Pack up the nupkg file"
 task :pack => [:restore] do
 	Dir.mkdir "artifacts"
-    ENV["DNX_BUILD_VERSION"] = build_revision
-	sh "dnu pack src\\Baseline --out .\\artifacts --configuration #{COMPILE_TARGET}"
+  ENV["DOTNET_BUILD_VERSION"] = build_revision
+	sh "dotnet pack src/Baseline --output ./artifacts --configuration #{COMPILE_TARGET}"
 end
 
 
