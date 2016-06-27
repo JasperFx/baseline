@@ -97,7 +97,7 @@ namespace Baseline.Testing
             cache.ShouldContain(42);
         }
 
-        [Fact]
+        [Fact(Skip = "Re-evaluate after NSubstitute updates come out")]
         public void set_GetKey()
         {
             ICallback callback = Substitute.For<ICallback>();
