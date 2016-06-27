@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Rhino.Mocks;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -81,10 +81,10 @@ namespace Baseline.Testing
         [Fact]
         public void set_GetKey()
         {
-            ICallback callback = MockRepository.GenerateStub<ICallback>();
+            ICallback callback = Substitute.For<ICallback>();
             cache.GetKey = callback.GetKeyCallback;
             cache.GetKey(42);
-            callback.AssertWasCalled(c => c.GetKeyCallback(42));
+            callback.Received().GetKeyCallback(42);
         }
 
         [Fact]

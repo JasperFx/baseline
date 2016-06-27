@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Rhino.Mocks;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -112,21 +112,23 @@ namespace Baseline.Testing
         [Fact]
         public void set_GetKey()
         {
-            ICallback callback = MockRepository.GenerateStub<ICallback>();
+            ICallback callback = Substitute.For<ICallback>();
             cache.GetKey = callback.GetKeyCallback;
             cache.GetKey(42);
-            callback.AssertWasCalled(c=>c.GetKeyCallback(42));
+            callback.Received().GetKeyCallback(42);
         }
 
         [Fact]
         public void set_OnAddition()
         {
-            ICallback callback = MockRepository.GenerateStub<ICallback>();
+            ICallback callback = Substitute.For<ICallback>();
             cache["firstKey"] = 0;
-            callback.AssertWasNotCalled(c => c.OnAdditionCallback(42));
+            callback.DidNotReceive().OnAdditionCallback(42);
+            //callback.AssertWasNotCalled(c => c.OnAdditionCallback(42));
             cache.OnAddition = callback.OnAdditionCallback;
             cache[Key] = 42;
-            callback.AssertWasCalled(c=>c.OnAdditionCallback(42));
+            callback.Received().OnAdditionCallback(42);
+            //callback.AssertWasCalled(c=>c.OnAdditionCallback(42));
         }
 
         [Fact]

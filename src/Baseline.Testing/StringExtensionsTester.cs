@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO;
-using Rhino.Mocks;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -27,28 +27,28 @@ namespace Baseline.Testing
         [Fact]
         public void if_not_null_positive()
         {
-            var action = MockRepository.GenerateMock<Action<string>>();
+            var action = Substitute.For<Action<string>>();
 
             "a".IfNotNull(action);
 
-            action.AssertWasCalled(x => x.Invoke("a"));
+            action.Received().Invoke("a");
         }
 
         [Fact]
         public void if_not_null_negative()
         {
-            var action = MockRepository.GenerateMock<Action<string>>();
+            var action = Substitute.For<Action<string>>();
             string a = null;
 
             a.IfNotNull(action);
 
-            action.AssertWasNotCalled(x => x.Invoke(null), x => x.IgnoreArguments());
+            action.DidNotReceiveWithAnyArgs().Invoke(null);
         }
 
         [Fact]
         public void combine_to_path_when_rooted()
         {
-            var rooted = Path.Combine(Path.GetPathRoot(AppDomain.CurrentDomain.BaseDirectory), "here");
+            var rooted = Path.Combine(Path.GetPathRoot(Directory.GetCurrentDirectory()), "here");
             rooted.CombineToPath("there").ShouldBe(rooted);
         }
 
@@ -106,7 +106,7 @@ namespace Baseline.Testing
                                   "100,000.1",
                               };
 
-            numbers.Each(x => x.IsValidNumber(CultureInfo.CreateSpecificCulture("en-us")).ShouldBeTrue());
+            numbers.Each(x => x.IsValidNumber(new CultureInfo("en-us")).ShouldBeTrue());
           
         }
 
@@ -122,8 +122,7 @@ namespace Baseline.Testing
                                   "10.000,1",
                                   "100.000,1",
                               };
-
-            numbers.Each(x => x.IsValidNumber(CultureInfo.CreateSpecificCulture("de-DE")).ShouldBeTrue());
+            numbers.Each(x => x.IsValidNumber(new CultureInfo("de-DE")).ShouldBeTrue());
           
         }
 
@@ -138,7 +137,7 @@ namespace Baseline.Testing
                                   "A,Jun.K",
                               };
 
-            numbers.Each(x => x.IsValidNumber(CultureInfo.CreateSpecificCulture("en-us")).ShouldBeFalse());
+            numbers.Each(x => x.IsValidNumber(new CultureInfo("en-us")).ShouldBeFalse());
         }
 
         [Fact]
@@ -180,7 +179,7 @@ e
         [Fact]
         public void read_lines_to_an_action()
         {
-            var action = MockRepository.GenerateMock<Action<string>>();
+            var action = Substitute.For<Action<string>>();
 
             var text = @"a
 b
@@ -192,13 +191,11 @@ e
 
             text.ReadLines(action);
 
-            action.AssertWasCalled(x => x.Invoke("a"));
-            action.AssertWasCalled(x => x.Invoke("b"));
-            action.AssertWasCalled(x => x.Invoke("c"));
-            action.AssertWasCalled(x => x.Invoke("d"));
-            action.AssertWasCalled(x => x.Invoke("e"));
-
-            
+            action.Received().Invoke("a");
+            action.Received().Invoke("b");
+            action.Received().Invoke("c");
+            action.Received().Invoke("d");
+            action.Received().Invoke("e");
         }
 
         [Fact]
@@ -212,15 +209,15 @@ e
         [Fact]
         public void to_enum()
         {
-            var x = "Machine".ToEnum<EnvironmentVariableTarget>();
-            x.ShouldBe(EnvironmentVariableTarget.Machine);
+            var x = "Machine".ToEnum<EnvTarget>();
+            x.ShouldBe(EnvTarget.Machine);
         }
 
         [Fact]
         public void to_enum_should_ignore_case()
         {
-            var x = "machine".ToEnum<EnvironmentVariableTarget>();
-            x.ShouldBe(EnvironmentVariableTarget.Machine);
+            var x = "machine".ToEnum<EnvTarget>();
+            x.ShouldBe(EnvTarget.Machine);
         }
 
         [Fact]
@@ -256,5 +253,12 @@ e
         {
             "my file".FileEscape().ShouldBe("\"my file\"");
         }
+    }
+
+    public enum EnvTarget
+    {
+        Machine,
+        Process,
+        User
     }
 }

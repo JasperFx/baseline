@@ -285,7 +285,7 @@ namespace Baseline.Testing
         [Fact]
         public void found()
         {
-            var expected = Environment.CurrentDirectory.AppendPath("deep".AppendPath("config"));
+            var expected = Directory.GetCurrentDirectory().AppendPath("deep".AppendPath("config"));
             
             var dir = _fileSystem.SearchUpForDirectory("deep/a/b/c".ToFullPath(), "config");
 

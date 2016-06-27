@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Rhino.Mocks;
+using System.Reflection;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -79,7 +80,7 @@ namespace Baseline.Testing
             typeof (Service2).FindInterfaceThatCloses(typeof (IService<>))
                 .ShouldBeNull();
 
-            typeof(IService<>).FindInterfaceThatCloses(Arg<Type>.Is.Anything).ShouldBeNull();
+            typeof(IService<>).FindInterfaceThatCloses(Arg.Any<Type>()).ShouldBeNull();
         }
 
         [Fact]
@@ -209,7 +210,7 @@ namespace Baseline.Testing
             this.GetType().IsInNamespace("wrong").ShouldBeFalse();
             this.GetType().IsInNamespace(this.GetType().Namespace + ".something").ShouldBeFalse();
             this.GetType().IsInNamespace(this.GetType().Namespace).ShouldBeTrue();
-            this.GetType().IsInNamespace(this.GetType().Assembly.GetName().Name).ShouldBeTrue();
+            this.GetType().IsInNamespace(this.GetType().GetTypeInfo().Assembly.GetName().Name).ShouldBeTrue();
 
             Type type = null;
             type.IsInNamespace("anything").ShouldBeFalse();

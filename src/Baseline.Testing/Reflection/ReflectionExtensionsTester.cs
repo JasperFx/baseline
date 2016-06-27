@@ -1,7 +1,7 @@
 using System;
 using System.Linq.Expressions;
 using Baseline.Reflection;
-using Rhino.Mocks;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -20,8 +20,8 @@ namespace Baseline.Testing.Reflection
         public ReflectionExtensionsTester()
         {
             _expression = ph => ph.Age;
-            _callback = MockRepository.GenerateStub<ICallback>();
-            _uncalledCallback = MockRepository.GenerateStub<ICallback>();
+            _callback = Substitute.For<ICallback>();
+            _uncalledCallback = Substitute.For<ICallback>();
         }
 
 
@@ -36,9 +36,9 @@ namespace Baseline.Testing.Reflection
         {
             Accessor accessor = _expression.ToAccessor();
             accessor.IfPropertyTypeIs<int>(_callback.Callback);
-            _callback.AssertWasCalled(c=>c.Callback());
+            _callback.Received().Callback();
             accessor.IfPropertyTypeIs<PropertyHolder>(_uncalledCallback.Callback);
-            _uncalledCallback.AssertWasNotCalled(c=>c.Callback());
+            _uncalledCallback.DidNotReceive().Callback();
         }
 
         [Fact]
