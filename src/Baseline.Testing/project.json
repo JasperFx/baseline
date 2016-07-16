@@ -1,5 +1,8 @@
 ﻿{
   "testRunner": "xunit",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
   "dependencies": {
     "xunit": "2.1.0",
     "dotnet-test-xunit": "1.0.0-rc3-build10019",

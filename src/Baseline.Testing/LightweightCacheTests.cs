@@ -79,15 +79,6 @@ namespace Baseline.Testing
         }
 
         [Fact]
-        public void set_GetKey()
-        {
-            ICallback callback = Substitute.For<ICallback>();
-            cache.GetKey = callback.GetKeyCallback;
-            cache.GetKey(42);
-            callback.Received().GetKeyCallback(42);
-        }
-
-        [Fact]
         public void can_remove()
         {
             cache[Key] = 42;
