@@ -8285,7 +8285,7 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Baseline",
+      "Baseline >= 1.0.0-alpha-*",
       "NSubstitute >= 2.0.0-alpha003",
       "Shouldly >= 2.8.0",
       "dotnet-test-xunit >= 1.0.0-rc3-build10019",

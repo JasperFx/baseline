@@ -1,4 +1,4 @@
-﻿{
+{
   "testRunner": "xunit",
   "buildOptions": {
     "emitEntryPoint": true
@@ -6,9 +6,9 @@
   "dependencies": {
     "xunit": "2.1.0",
     "dotnet-test-xunit": "1.0.0-rc3-build10019",
-    "Baseline": { "target": "project" },
     "Shouldly": "2.8.0",
-    "NSubstitute": "2.0.0-alpha003"
+    "NSubstitute": "2.0.0-alpha003",
+    "Baseline": "1.0.0-alpha-*"
   },
   "frameworks": {
     "netcoreapp1.0": {
