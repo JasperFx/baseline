@@ -62,43 +62,44 @@ namespace Baseline.Binding
 
         public static Expression BindProperty(ParameterExpression target, ParameterExpression source, Conversions conversions, PropertyInfo property)
         {
-            var func = conversions.FindConverter(property.PropertyType);
-            if (func == null)
-            {
-                return null;
-            }
+            var value = fetchValue(source, conversions, property.PropertyType, property.Name);
+            if (value == null) return null;
 
-            var name = Expression.Constant(property.Name);
-            var value = Expression.Call(source, BindingExpressions.DataSourceGet, name);
-            var convert = Expression.Invoke(Expression.Constant(func), value);
-            var cast = Expression.Convert(convert, property.PropertyType);
 
             var method = property.SetMethod;
 
-            var callSetMethod = Expression.Call(target, method, cast);
+            var callSetMethod = Expression.Call(target, method, value);
 
-            var condition = Expression.Call(source, BindingExpressions.DataSourceHas, name);
+            var condition = Expression.Call(source, BindingExpressions.DataSourceHas, Expression.Constant(property.Name));
 
             return Expression.IfThen(condition, callSetMethod);
         }
 
-        public static Expression BindField(ParameterExpression target, ParameterExpression source, Conversions conversions, FieldInfo field)
+        private static Expression fetchValue(ParameterExpression source, Conversions conversions, Type memberType, string memberName)
         {
-            var func = conversions.FindConverter(field.FieldType);
+            var func = conversions.FindConverter(memberType);
             if (func == null)
             {
                 return null;
             }
 
-            var name = Expression.Constant(field.Name);
-            var value = Expression.Call(source, BindingExpressions.DataSourceGet, name);
-            var convert = Expression.Invoke(Expression.Constant(func), value);
-            var cast = Expression.Convert(convert, field.FieldType);
+            Expression value = Expression.Call(source, BindingExpressions.DataSourceGet, Expression.Constant(memberName));
+            value = Expression.Invoke(Expression.Constant(func), value);
+            value = Expression.Convert(value, memberType);
+
+            return value;
+        }
+
+        public static Expression BindField(ParameterExpression target, ParameterExpression source, Conversions conversions, FieldInfo field)
+        {
+            var value = fetchValue(source, conversions, field.FieldType, field.Name);
+            if (value == null) return null;
+
 
             var fieldExpression = Expression.Field(target, field);
-            var assign = Expression.Assign(fieldExpression, cast);
+            var assign = Expression.Assign(fieldExpression, value);
 
-            var condition = Expression.Call(source, BindingExpressions.DataSourceHas, name);
+            var condition = Expression.Call(source, BindingExpressions.DataSourceHas, Expression.Constant(field.Name));
 
             return Expression.IfThen(condition, assign);
         }
