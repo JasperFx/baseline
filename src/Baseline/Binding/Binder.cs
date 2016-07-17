@@ -75,21 +75,6 @@ namespace Baseline.Binding
             return Expression.IfThen(condition, callSetMethod);
         }
 
-        private static Expression fetchValue(ParameterExpression source, Conversions conversions, Type memberType, string memberName)
-        {
-            var func = conversions.FindConverter(memberType);
-            if (func == null)
-            {
-                return null;
-            }
-
-            Expression value = Expression.Call(source, BindingExpressions.DataSourceGet, Expression.Constant(memberName));
-            value = Expression.Invoke(Expression.Constant(func), value);
-            value = Expression.Convert(value, memberType);
-
-            return value;
-        }
-
         public static Expression BindField(ParameterExpression target, ParameterExpression source, Conversions conversions, FieldInfo field)
         {
             var value = fetchValue(source, conversions, field.FieldType, field.Name);
@@ -102,6 +87,27 @@ namespace Baseline.Binding
             var condition = Expression.Call(source, BindingExpressions.DataSourceHas, Expression.Constant(field.Name));
 
             return Expression.IfThen(condition, assign);
+        }
+
+        private static Expression fetchValue(ParameterExpression source, Conversions conversions, Type memberType, string memberName)
+        {
+            Expression value = Expression.Call(source, BindingExpressions.DataSourceGet, Expression.Constant(memberName));
+            if (memberType == typeof(string))
+            {
+                return value;
+            }
+
+            var func = conversions.FindConverter(memberType);
+            if (func == null)
+            {
+                return null;
+            }
+
+            
+            value = Expression.Invoke(Expression.Constant(func), value);
+            value = Expression.Convert(value, memberType);
+
+            return value;
         }
     }
 }
