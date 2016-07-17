@@ -5,6 +5,19 @@ using Xunit;
 
 namespace Baseline.Testing.Binding
 {
+    /*
+     * More things:
+     * 1.) test numbers
+     * 2.) test dates, etc.
+     * 3.) Missing data, do nothing
+     * 4.) ConvertProblems
+     * 5.) Nested properties
+     * 6.) Use expressions within conversions to be more efficient
+     * 7.) BoundProperty/BoundField/BoundNested model for diagnostics
+     * 8.) Optimize strings
+     * 
+     */
+
     public class BinderTests
     {
         public BinderTests()
@@ -26,12 +39,27 @@ namespace Baseline.Testing.Binding
         }
 
         [Fact]
+        public void do_nothing_with_a_missing_string_property_value()
+        {
+            binder.Build(theSource)
+                .String.ShouldBeNull();
+        }
+
+        [Fact]
         public void can_bind_string_field()
         {
             theData.Add(nameof(Target.StringField), "somebody");
 
             binder.Build(theSource)
                 .StringField.ShouldBe("somebody");
+        }
+
+
+        [Fact]
+        public void do_nothing_with_a_missing_string_field_value()
+        {
+            binder.Build(theSource)
+                .StringField.ShouldBeNull();
         }
 
 
