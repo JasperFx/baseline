@@ -7,13 +7,6 @@ using Xunit;
 
 namespace Baseline.Testing.Binding
 {
-    /*
-     * More things:
-     * 6.) Use expressions within conversions to be more efficient
-
-     * 
-     */
-
     public class BinderTests
     {
         public BinderTests()
@@ -48,6 +41,15 @@ namespace Baseline.Testing.Binding
 
             binder.Build(theSource)
                 .StringField.ShouldBe("somebody");
+        }
+
+        [Fact]
+        public void can_bind_guid()
+        {
+            var id = Guid.NewGuid();
+            theData.Add(nameof(Target.Id), id.ToString());
+
+            binder.Build(theSource).Id.ShouldBe(id);
         }
 
 

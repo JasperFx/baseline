@@ -18,8 +18,8 @@ namespace Baseline.Binding
 
         public Expression ToBindExpression(Expression target, Expression source, Expression log, Conversions conversions)
         {
-            var value = fetchValue(source, conversions, MemberType, Member.Name);
-            if (value == null) return null;
+            Expression value = Expression.Call(source, BindingExpressions.DataSourceGet, Expression.Constant(Member.Name));
+            value = BindingExpressions.ToConversion(conversions, value, MemberType);
 
             var setter = toSetter(target, value);
 
@@ -41,27 +41,5 @@ namespace Baseline.Binding
         }
 
         protected abstract Expression toSetter(Expression target, Expression value);
-
-        private static Expression fetchValue(Expression source, Conversions conversions, Type memberType,
-            string memberName)
-        {
-            Expression value = Expression.Call(source, BindingExpressions.DataSourceGet, Expression.Constant(memberName));
-            if (memberType == typeof(string))
-            {
-                return value;
-            }
-
-            var func = conversions.FindConverter(memberType);
-            if (func == null)
-            {
-                return null;
-            }
-
-
-            value = Expression.Invoke(Expression.Constant(func), value);
-            value = Expression.Convert(value, memberType);
-
-            return value;
-        }
     }
 }
