@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Baseline.Binding;
 using Shouldly;
 using Xunit;
@@ -92,6 +94,30 @@ namespace Baseline.Testing.Binding
             target.Long.ShouldBe(2L);
             target.Double.ShouldBe(3.4);
             target.Float.ShouldBe(5.6F);
+        }
+
+        [Fact]
+        public void can_capture_problems_without_blowing_up()
+        {
+            MemberInfo member = null;
+            Exception ex = null;
+
+            theData.Add(nameof(Target.Number), "1");
+
+            // Will cause a conversion problem
+            theData.Add(nameof(Target.Long), "abc");
+
+            var target = binder.Build(theSource, (m, e) =>
+            {
+                member = m;
+                ex = e;
+            });
+
+            target.Number.ShouldBe(1);
+
+            member.Name.ShouldBe(nameof(Target.Long));
+
+            ex.ShouldBeOfType<FormatException>();
         }
 
         [Fact]

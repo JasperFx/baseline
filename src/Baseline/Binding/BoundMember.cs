@@ -23,9 +23,21 @@ namespace Baseline.Binding
 
             var setter = toSetter(target, value);
 
-            var condition = Expression.Call(source, BindingExpressions.DataSourceHas, Expression.Constant(Member.Name));
+            var ex = Expression.Variable(typeof(Exception), "ex");
 
-            return Expression.IfThen(condition, setter);
+            var logProblem = Expression.Invoke(log, Expression.Constant(Member), ex);
+
+            var catcher = Expression.Catch(ex, Expression.Block(logProblem, Expression.Default(setter.Type)), null);
+            var tryCatch = Expression.TryCatch(setter, catcher);
+
+            var condition = Expression.Call(
+                source, 
+                BindingExpressions.DataSourceHas, 
+                Expression.Constant(Member.Name));
+
+
+
+            return Expression.IfThen(condition, tryCatch);
         }
 
         protected abstract Expression toSetter(ParameterExpression target, Expression value);
