@@ -81,6 +81,32 @@ namespace Baseline.Testing.Binding
 
             guy.Name.ShouldBe("Declan");
         }
+
+        [Fact]
+        public void can_bind_numbers()
+        {
+            theData.Add(nameof(Target.Number), "1");
+            theData.Add(nameof(Target.Long), "2");
+            theData.Add(nameof(Target.Double), "3.4");
+            theData.Add(nameof(Target.Float), "5.6");
+
+            var target = binder.Build(theSource);
+
+            target.Number.ShouldBe(1);
+            target.Long.ShouldBe(2L);
+            target.Double.ShouldBe(3.4);
+            target.Float.ShouldBe(5.6F);
+        }
+
+        [Fact]
+        public void can_bind_booleans()
+        {
+            theData.Add(nameof(Target.Flag), "true");
+
+            binder.Build(theSource)
+                .Flag.ShouldBeTrue();
+        }
+        
     }
 
     public class SinglePropertyGuy
