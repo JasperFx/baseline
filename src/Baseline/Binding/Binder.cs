@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -8,45 +6,6 @@ using Baseline.Conversion;
 
 namespace Baseline.Binding
 {
-    public interface IDataSource
-    {
-        bool Has(string key);
-        string Get(string key);
-
-        IEnumerable<string> Keys();
-    }
-
-    public class DictionaryDataSource : IDataSource
-    {
-        public IDictionary<string, string> Dictionary { get; }
-
-        public DictionaryDataSource(IDictionary<string, string> dictionary)
-        {
-            Dictionary = dictionary;
-        }
-
-        public bool Has(string key)
-        {
-            return Dictionary.ContainsKey(key);
-        }
-
-        public string Get(string key)
-        {
-            return Dictionary[key];
-        }
-
-        public IEnumerable<string> Keys()
-        {
-            return Dictionary.Keys;
-        }
-    }
-
-    internal class BindingExpressions
-    {
-        internal static MethodInfo DataSourceGet = typeof(IDataSource).GetMethod(nameof(IDataSource.Get));
-        internal static MethodInfo DataSourceHas = typeof(IDataSource).GetMethod(nameof(IDataSource.Has));
-    }
-
     public class Binder<T>
     {
         private readonly Action<IDataSource, T> _bindAll;
@@ -66,7 +25,7 @@ namespace Baseline.Binding
 
             var allSetters = properties.Concat(fields).Where(x => x != null).ToArray();
 
-            var block = Expression.Block(new[] { source, target }, allSetters);
+            var block = Expression.Block(allSetters);
 
             var bindAll = Expression.Lambda<Action<IDataSource, T>>(block, source, target);
 
