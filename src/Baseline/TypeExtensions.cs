@@ -345,6 +345,12 @@ namespace Baseline
             return (T) Activator.CreateInstance(closedType, ctorArgument);
         }
 
+        public static T CloseAndBuildAs<T>(this Type openType, object ctorArgument1, object ctorArgument2, params Type[] parameterTypes)
+        {
+            var closedType = openType.MakeGenericType(parameterTypes);
+            return (T)Activator.CreateInstance(closedType, ctorArgument1, ctorArgument2);
+        }
+
         public static bool PropertyMatches(this PropertyInfo prop1, PropertyInfo prop2)
         {
             return prop1.DeclaringType == prop2.DeclaringType && prop1.Name == prop2.Name;

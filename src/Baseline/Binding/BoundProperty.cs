@@ -18,13 +18,21 @@ namespace Baseline.Binding
 
         public static IEnumerable<IBoundMember> FindMembers(Type type, Conversions conversions)
         {
-            return type.GetProperties()
-                .Where(x => x.CanWrite)
+            var allProps = type.GetProperties()
+                .Where(x => x.CanWrite).ToArray();
+
+            var simples = allProps
                 .Where(x => conversions.Has(x.PropertyType))
                 .Select(x => new BoundProperty(x));
+
+            var nested =
+                allProps.Where(x => !conversions.Has(x.PropertyType) && x.PropertyType.IsConcreteWithDefaultCtor())
+                .Select(x => typeof(NestedPropertyMember<>).CloseAndBuildAs<IBoundMember>(conversions, x, x.PropertyType));
+
+            return simples.Concat(nested);
         }
 
-        protected override Expression toSetter(ParameterExpression target, Expression value)
+        protected override Expression toSetter(Expression target, Expression value)
         {
             var method = _property.SetMethod;
 

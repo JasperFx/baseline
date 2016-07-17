@@ -8,5 +8,9 @@ namespace Baseline.Binding
         string Get(string key);
 
         IEnumerable<string> Keys();
+
+        bool HasChild(string key);
+
+        IDataSource GetChild(string key);
     }
 }

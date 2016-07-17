@@ -69,17 +69,6 @@ namespace Baseline.Testing
 
             target.Date = DateTime.Today.AddDays(_random.Next(-10000, 10000)).ToUniversalTime();
 
-            if (deep)
-            {
-                target.Inner = Random();
-
-                var number = _random.Next(1, 10);
-                target.Children = new Target[number];
-                for (int i = 0; i < number; i++)
-                {
-                    target.Children[i] = Random();
-                }
-            }
 
             return target;
         }
@@ -98,7 +87,9 @@ namespace Baseline.Testing
 
         public Guid OtherGuid { get; set; }
 
-        public Target Inner { get; set; }
+        public Child Inner { get; set; }
+
+        public Child InnerField { get; set; }
 
         public Colors Color { get; set; }
 
@@ -116,11 +107,25 @@ namespace Baseline.Testing
         public int[] NumberArray { get; set; }
 
 
-        public Target[] Children { get; set; }
+        public Child[] Children { get; set; }
 
         public int? NullableNumber { get; set; }
         public DateTime? NullableDateTime { get; set; }
         public bool? NullableBoolean { get; set; }
+    }
+
+    public class Child
+    {
+        public string Name;
+        public Colors Color;
+
+        public GrandChild GrandChild;
+    }
+
+    public class GrandChild
+    {
+        public string Name;
+        public int Age;
     }
 
 }

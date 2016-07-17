@@ -13,7 +13,8 @@ namespace Baseline.Binding
         private readonly Action<IDataSource, T, LogProblem> _bindAll;
         private readonly Func<T> _create;
 
-        private readonly IList<IBoundMember> _members = new List<IBoundMember>(); 
+        private readonly IList<IBoundMember> _members = new List<IBoundMember>();
+        public NewExpression NewUpExpression;
 
         public Binder() : this(new Conversions())
         {
@@ -35,13 +36,15 @@ namespace Baseline.Binding
 
             var bindAll = Expression.Lambda<Action<IDataSource, T, LogProblem>>(block, source, target, log);
 
+            
+
             _bindAll = bindAll.Compile();
 
             var ctor = typeof(T).GetConstructors().FirstOrDefault(x => x.GetParameters().Length == 0);
             if (ctor != null)
             {
-                var newUp = Expression.New(ctor);
-                _create = Expression.Lambda<Func<T>>(newUp).Compile();
+                NewUpExpression = Expression.New(ctor);
+                _create = Expression.Lambda<Func<T>>(NewUpExpression).Compile();
             }
         }
 

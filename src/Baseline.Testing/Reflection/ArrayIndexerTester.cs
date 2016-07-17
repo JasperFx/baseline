@@ -7,7 +7,7 @@ namespace Baseline.Testing.Reflection
 {
     public class ArrayIndexerTester
     {
-        public class Target
+        public class ArrayTarget
         {
             public string Name { get; set; }
         }
@@ -15,22 +15,22 @@ namespace Baseline.Testing.Reflection
         [Fact]
         public void DeclaringType_of_a_array_is_the_array_type()
         {
-            var accessor = ReflectionHelper.GetAccessor<Target[]>(x => x[1]);
+            var accessor = ReflectionHelper.GetAccessor<ArrayTarget[]>(x => x[1]);
             accessor.ShouldBeOfType<ArrayIndexer>();
-            accessor.OwnerType.ShouldBe(typeof (Target[]));
-            accessor.DeclaringType.ShouldBe(typeof (Target[]));
+            accessor.OwnerType.ShouldBe(typeof (ArrayTarget[]));
+            accessor.DeclaringType.ShouldBe(typeof (ArrayTarget[]));
             accessor.FieldName.ShouldBe("[1]");
             accessor.InnerProperty.ShouldBeNull();
             accessor.PropertyNames.ShouldContain("[1]");
-            accessor.PropertyType.ShouldBe(typeof (Target));
+            accessor.PropertyType.ShouldBe(typeof (ArrayTarget));
         }
 
         [Fact]
         public void GetValueFromArray()
         {
-            var accessor = ReflectionHelper.GetAccessor<Target[]>(x => x[1]);
+            var accessor = ReflectionHelper.GetAccessor<ArrayTarget[]>(x => x[1]);
 
-            var target = new[] {new Target(), new Target() };
+            var target = new[] {new ArrayTarget(), new ArrayTarget() };
 
             accessor.GetValue(target).ShouldBe(target[1]);
             accessor.GetValue(target).ShouldNotBe(target[0]);
@@ -39,11 +39,11 @@ namespace Baseline.Testing.Reflection
         [Fact]
         public void SetValueOnArray()
         {
-            var accessor = ReflectionHelper.GetAccessor<Target[]>(x => x[1]);
+            var accessor = ReflectionHelper.GetAccessor<ArrayTarget[]>(x => x[1]);
 
-            var original = new Target();
-            var replacement = new Target();
-            var target = new[] {new Target(), original };
+            var original = new ArrayTarget();
+            var replacement = new ArrayTarget();
+            var target = new[] {new ArrayTarget(), original };
 
             accessor.SetValue(target, replacement);
             target[1].ShouldNotBe(original);
@@ -53,10 +53,10 @@ namespace Baseline.Testing.Reflection
         [Fact]
         public void ExpressionCreation()
         {
-            var accessor = ReflectionHelper.GetAccessor<Target[]>(x => x[1]);
+            var accessor = ReflectionHelper.GetAccessor<ArrayTarget[]>(x => x[1]);
 
-            var target = new[] {new Target(), new Target() };
-            accessor.ToExpression<Target[]>().Compile()(target).ShouldBe(target[1]);
+            var target = new[] {new ArrayTarget(), new ArrayTarget() };
+            accessor.ToExpression<ArrayTarget[]>().Compile()(target).ShouldBe(target[1]);
         }
 
         [Fact]

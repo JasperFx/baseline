@@ -18,12 +18,20 @@ namespace Baseline.Binding
 
         public static IEnumerable<IBoundMember> FindMembers(Type type, Conversions conversions)
         {
-            return type.GetFields().Where(x => x.IsPublic)
+            var allFields = type.GetFields().Where(x => x.IsPublic).ToArray();
+
+            var simples = allFields
                 .Where(x => conversions.Has(x.FieldType))
                 .Select(x => new BoundField(x));
+
+            var nested =
+                allFields.Where(x => !conversions.Has(x.FieldType) && x.FieldType.IsConcreteWithDefaultCtor())
+                .Select(x => typeof(NestedFieldMember<>).CloseAndBuildAs<IBoundMember>(conversions, x, x.FieldType));
+
+            return simples.Concat(nested);
         }
 
-        protected override Expression toSetter(ParameterExpression target, Expression value)
+        protected override Expression toSetter(Expression target, Expression value)
         {
             var fieldExpression = Expression.Field(target, _field);
             return Expression.Assign(fieldExpression, value);

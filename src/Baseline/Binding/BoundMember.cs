@@ -16,7 +16,7 @@ namespace Baseline.Binding
         public MemberInfo Member { get; }
         public Type MemberType { get; }
 
-        public Expression ToBindExpression(ParameterExpression target, ParameterExpression source, ParameterExpression log, Conversions conversions)
+        public Expression ToBindExpression(Expression target, Expression source, Expression log, Conversions conversions)
         {
             var value = fetchValue(source, conversions, MemberType, Member.Name);
             if (value == null) return null;
@@ -40,9 +40,9 @@ namespace Baseline.Binding
             return Expression.IfThen(condition, tryCatch);
         }
 
-        protected abstract Expression toSetter(ParameterExpression target, Expression value);
+        protected abstract Expression toSetter(Expression target, Expression value);
 
-        private static Expression fetchValue(ParameterExpression source, Conversions conversions, Type memberType,
+        private static Expression fetchValue(Expression source, Conversions conversions, Type memberType,
             string memberName)
         {
             Expression value = Expression.Call(source, BindingExpressions.DataSourceGet, Expression.Constant(memberName));

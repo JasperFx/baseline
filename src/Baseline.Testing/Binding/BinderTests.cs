@@ -9,7 +9,6 @@ namespace Baseline.Testing.Binding
 {
     /*
      * More things:
-     * 4.) ConvertProblems
      * 5.) Nested properties
      * 6.) Use expressions within conversions to be more efficient
 
