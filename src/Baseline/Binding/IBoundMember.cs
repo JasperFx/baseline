@@ -11,6 +11,6 @@ namespace Baseline.Binding
 
         Type MemberType { get; }
 
-        Expression ToBindExpression(ParameterExpression target, ParameterExpression source, Conversions conversions);
+        Expression ToBindExpression(ParameterExpression target, ParameterExpression source, ParameterExpression log, Conversions conversions);
     }
 }

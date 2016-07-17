@@ -10,7 +10,6 @@ namespace Baseline.Testing.Binding
      * 4.) ConvertProblems
      * 5.) Nested properties
      * 6.) Use expressions within conversions to be more efficient
-     * 7.) BoundProperty/BoundField/BoundNested model for diagnostics
 
      * 
      */

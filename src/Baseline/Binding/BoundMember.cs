@@ -16,8 +16,7 @@ namespace Baseline.Binding
         public MemberInfo Member { get; }
         public Type MemberType { get; }
 
-        public Expression ToBindExpression(ParameterExpression target, ParameterExpression source,
-            Conversions conversions)
+        public Expression ToBindExpression(ParameterExpression target, ParameterExpression source, ParameterExpression log, Conversions conversions)
         {
             var value = fetchValue(source, conversions, MemberType, Member.Name);
             if (value == null) return null;
