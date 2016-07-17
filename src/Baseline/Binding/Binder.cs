@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -11,6 +12,8 @@ namespace Baseline.Binding
         private readonly Action<IDataSource, T> _bindAll;
         private readonly Func<T> _create;
 
+        private readonly IList<IBoundMember> _members = new List<IBoundMember>(); 
+
         public Binder() : this(new Conversions())
         {
         }
@@ -20,10 +23,11 @@ namespace Baseline.Binding
             var source = Expression.Parameter(typeof(IDataSource), "source");
             var target = Expression.Parameter(typeof(T), "target");
 
-            var properties = typeof(T).GetProperties().Where(x => x.CanWrite).Select(x => BindProperty(target, source, conversions, x));
-            var fields = typeof(T).GetFields().Where(x => x.IsPublic).Select(x => BindField(target, source, conversions, x));
+            _members.AddRange(BoundProperty.FindMembers(typeof(T), conversions));
+            _members.AddRange(BoundField.FindMembers(typeof(T), conversions));
 
-            var allSetters = properties.Concat(fields).Where(x => x != null).ToArray();
+
+            var allSetters = _members.Select(x => x.ToBindExpression(target, source, conversions)).ToArray();
 
             var block = Expression.Block(allSetters);
 
@@ -38,6 +42,8 @@ namespace Baseline.Binding
                 _create = Expression.Lambda<Func<T>>(newUp).Compile();
             }
         }
+
+        public IEnumerable<IBoundMember> Members => _members;
 
         public bool CanBuild => _create != null;
 
@@ -58,56 +64,5 @@ namespace Baseline.Binding
             return target;
         }
 
-
-
-        public static Expression BindProperty(ParameterExpression target, ParameterExpression source, Conversions conversions, PropertyInfo property)
-        {
-            var value = fetchValue(source, conversions, property.PropertyType, property.Name);
-            if (value == null) return null;
-
-
-            var method = property.SetMethod;
-
-            var callSetMethod = Expression.Call(target, method, value);
-
-            var condition = Expression.Call(source, BindingExpressions.DataSourceHas, Expression.Constant(property.Name));
-
-            return Expression.IfThen(condition, callSetMethod);
-        }
-
-        public static Expression BindField(ParameterExpression target, ParameterExpression source, Conversions conversions, FieldInfo field)
-        {
-            var value = fetchValue(source, conversions, field.FieldType, field.Name);
-            if (value == null) return null;
-
-
-            var fieldExpression = Expression.Field(target, field);
-            var assign = Expression.Assign(fieldExpression, value);
-
-            var condition = Expression.Call(source, BindingExpressions.DataSourceHas, Expression.Constant(field.Name));
-
-            return Expression.IfThen(condition, assign);
-        }
-
-        private static Expression fetchValue(ParameterExpression source, Conversions conversions, Type memberType, string memberName)
-        {
-            Expression value = Expression.Call(source, BindingExpressions.DataSourceGet, Expression.Constant(memberName));
-            if (memberType == typeof(string))
-            {
-                return value;
-            }
-
-            var func = conversions.FindConverter(memberType);
-            if (func == null)
-            {
-                return null;
-            }
-
-            
-            value = Expression.Invoke(Expression.Constant(func), value);
-            value = Expression.Convert(value, memberType);
-
-            return value;
-        }
     }
 }

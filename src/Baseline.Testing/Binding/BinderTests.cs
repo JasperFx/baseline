@@ -7,14 +7,11 @@ namespace Baseline.Testing.Binding
 {
     /*
      * More things:
-     * 1.) test numbers
-     * 2.) test dates, etc.
-     * 3.) Missing data, do nothing
      * 4.) ConvertProblems
      * 5.) Nested properties
      * 6.) Use expressions within conversions to be more efficient
      * 7.) BoundProperty/BoundField/BoundNested model for diagnostics
-     * 8.) Optimize strings
+
      * 
      */
 
