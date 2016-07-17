@@ -9,7 +9,6 @@ namespace Baseline.Testing.Binding
 {
     /*
      * More things:
-     * 5.) Nested properties
      * 6.) Use expressions within conversions to be more efficient
 
      * 
@@ -127,7 +126,53 @@ namespace Baseline.Testing.Binding
             binder.Build(theSource)
                 .Flag.ShouldBeTrue();
         }
-        
+
+        [Fact]
+        public void happily_ignores_nested_property_when_no_data_is_available()
+        {
+            //var child = theSource.AddChild(nameof(Target.Inner));
+            //child.Dictionary.Add(nameof(Child.Name), "Logan");
+
+            var target = binder.Build(theSource);
+
+            target.Inner.ShouldBeNull();
+        }
+
+        [Fact]
+        public void can_bind_nested_property()
+        {
+            var child = theSource.AddChild(nameof(Target.Inner));
+            child.Dictionary.Add(nameof(Child.Name), "Logan");
+
+            var target = binder.Build(theSource);
+
+            target.Inner.ShouldNotBeNull();
+            target.Inner.Name.ShouldBe("Logan");
+        }
+
+        [Fact]
+        public void happily_ignores_nested_field_when_no_data_is_available()
+        {
+            //var child = theSource.AddChild(nameof(Target.Inner));
+            //child.Dictionary.Add(nameof(Child.Name), "Logan");
+
+            var target = binder.Build(theSource);
+
+            target.InnerField.ShouldBeNull();
+        }
+
+        [Fact]
+        public void can_bind_nested_field()
+        {
+            var child = theSource.AddChild(nameof(Target.InnerField));
+            child.Dictionary.Add(nameof(Child.Name), "Ororo");
+
+            var target = binder.Build(theSource);
+
+            target.InnerField.ShouldNotBeNull();
+            target.InnerField.Name.ShouldBe("Ororo");
+        }
+
     }
 
     public class SinglePropertyGuy
