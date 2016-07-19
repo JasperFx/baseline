@@ -7,8 +7,28 @@ namespace Baseline
 {
     public static class TypeExtensions
     {
+        private static readonly IList<Type> _integerTypes = new List<Type>
+        {
+            typeof(byte),
+            typeof(short),
+            typeof(int),
+            typeof(long),
+            typeof(sbyte),
+            typeof(ushort),
+            typeof(uint),
+            typeof(ulong),
+            typeof(byte?),
+            typeof(short?),
+            typeof(int?),
+            typeof(long?),
+            typeof(sbyte?),
+            typeof(ushort?),
+            typeof(uint?),
+            typeof(ulong?)
+        };
+
         /// <summary>
-        /// Does a hard cast of the object to T.  *Will* throw InvalidCastException
+        ///     Does a hard cast of the object to T.  *Will* throw InvalidCastException
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="target"></param>
@@ -22,25 +42,25 @@ namespace Baseline
         {
             if (theType == null) return false;
 
-            return theType.GetTypeInfo().IsGenericType && theType.GetGenericTypeDefinition().Equals(typeof (Nullable<>));
+            return theType.GetTypeInfo().IsGenericType && theType.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
         public static bool IsNullableOf(this Type theType, Type otherType)
         {
-            return theType.IsNullableOfT() && theType.GetGenericArguments()[0].Equals(otherType);
+            return theType.IsNullableOfT() && theType.GetGenericArguments()[0] == otherType;
         }
 
         public static bool IsTypeOrNullableOf<T>(this Type theType)
         {
-            Type otherType = typeof (T);
+            var otherType = typeof(T);
             return theType == otherType ||
-                   (theType.IsNullableOfT() && theType.GetGenericArguments()[0].Equals(otherType));
+                   (theType.IsNullableOfT() && theType.GetGenericArguments()[0] == otherType);
         }
 
         public static bool CanBeCastTo<T>(this Type type)
         {
             if (type == null) return false;
-            Type destinationType = typeof (T);
+            var destinationType = typeof(T);
 
             return CanBeCastTo(type, destinationType);
         }
@@ -72,23 +92,24 @@ namespace Baseline
             if (type == null) return false;
 
             var genericArgs = type.GetGenericArguments();
-            return genericArgs.Length == 1 && typeof (IEnumerable<>).MakeGenericType(genericArgs).IsAssignableFrom(type);
+            return genericArgs.Length == 1 && typeof(IEnumerable<>).MakeGenericType(genericArgs).IsAssignableFrom(type);
         }
 
         public static bool IsConcreteTypeOf<T>(this Type pluggedType)
         {
             if (pluggedType == null) return false;
 
-            return pluggedType.IsConcrete() && typeof (T).IsAssignableFrom(pluggedType);
+            return pluggedType.IsConcrete() && typeof(T).IsAssignableFrom(pluggedType);
         }
 
         public static bool ImplementsInterfaceTemplate(this Type pluggedType, Type templateType)
         {
             if (!pluggedType.IsConcrete()) return false;
 
-            foreach (Type interfaceType in pluggedType.GetInterfaces())
+            foreach (var interfaceType in pluggedType.GetInterfaces())
             {
-                if (interfaceType.GetTypeInfo().IsGenericType && interfaceType.GetGenericTypeDefinition() == templateType)
+                if (interfaceType.GetTypeInfo().IsGenericType &&
+                    interfaceType.GetGenericTypeDefinition() == templateType)
                 {
                     return true;
                 }
@@ -108,10 +129,11 @@ namespace Baseline
 
             var typeInfo = type.GetTypeInfo();
 
-            if (typeInfo.IsInterface && typeInfo.IsGenericType && type.GetGenericTypeDefinition() == openType) return type;
+            if (typeInfo.IsInterface && typeInfo.IsGenericType && type.GetGenericTypeDefinition() == openType)
+                return type;
 
 
-            foreach (Type interfaceType in type.GetInterfaces())
+            foreach (var interfaceType in type.GetInterfaces())
             {
                 var interfaceTypeInfo = interfaceType.GetTypeInfo();
                 if (interfaceTypeInfo.IsGenericType && interfaceType.GetGenericTypeDefinition() == openType)
@@ -123,21 +145,21 @@ namespace Baseline
             if (!type.IsConcrete()) return null;
 
 
-            return typeInfo.BaseType == typeof (object)
-                       ? null
-                       : typeInfo.BaseType.FindInterfaceThatCloses(openType);
+            return typeInfo.BaseType == typeof(object)
+                ? null
+                : typeInfo.BaseType.FindInterfaceThatCloses(openType);
         }
 
         public static Type FindParameterTypeTo(this Type type, Type openType)
         {
             var interfaceType = type.FindInterfaceThatCloses(openType);
-            return interfaceType == null ? null : interfaceType.GetGenericArguments().FirstOrDefault();
+            return interfaceType?.GetGenericArguments().FirstOrDefault();
         }
 
         public static bool IsNullable(this Type type)
         {
             var typeInfo = type.GetTypeInfo();
-            return typeInfo.IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>);
+            return typeInfo.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
         public static bool Closes(this Type type, Type openType)
@@ -153,15 +175,15 @@ namespace Baseline
                 if (@interface.Closes(openType)) return true;
             }
 
-            Type baseType = typeInfo.BaseType;
+            var baseType = typeInfo.BaseType;
             if (baseType == null) return false;
 
             var baseTypeInfo = baseType.GetTypeInfo();
 
-            bool closes = baseTypeInfo.IsGenericType && baseType.GetGenericTypeDefinition() == openType;
+            var closes = baseTypeInfo.IsGenericType && baseType.GetGenericTypeDefinition() == openType;
             if (closes) return true;
 
-            return typeInfo.BaseType == null ? false : typeInfo.BaseType.Closes(openType);
+            return typeInfo.BaseType?.Closes(openType) ?? false;
         }
 
         public static Type GetInnerTypeFromNullable(this Type nullableType)
@@ -176,7 +198,7 @@ namespace Baseline
             if (typeInfo.IsGenericType)
             {
                 string[] parameters = type.GetGenericArguments().Select(x => x.GetName()).ToArray();
-                string parameterList = String.Join(", ", parameters);
+                var parameterList = string.Join(", ", parameters);
                 return "{0}<{1}>".ToFormat(type.Name, parameterList);
             }
 
@@ -189,7 +211,7 @@ namespace Baseline
             if (typeInfo.IsGenericType)
             {
                 string[] parameters = type.GetGenericArguments().Select(x => x.GetName()).ToArray();
-                string parameterList = String.Join(", ", parameters);
+                var parameterList = string.Join(", ", parameters);
                 return "{0}<{1}>".ToFormat(type.Name, parameterList);
             }
 
@@ -199,13 +221,13 @@ namespace Baseline
 
         public static bool IsString(this Type type)
         {
-            return type.Equals(typeof (string));
+            return type == typeof(string);
         }
 
         public static bool IsPrimitive(this Type type)
         {
             var typeInfo = type.GetTypeInfo();
-            return typeInfo.IsPrimitive && !IsString(type) && type != typeof (IntPtr);
+            return typeInfo.IsPrimitive && !IsString(type) && type != typeof(IntPtr);
         }
 
         public static bool IsSimple(this Type type)
@@ -229,22 +251,22 @@ namespace Baseline
         }
 
         /// <summary>
-        /// Returns true if the type is a DateTime or nullable DateTime
+        ///     Returns true if the type is a DateTime or nullable DateTime
         /// </summary>
         /// <param name="typeToCheck"></param>
         /// <returns></returns>
         public static bool IsDateTime(this Type typeToCheck)
         {
-            return typeToCheck == typeof (DateTime) || typeToCheck == typeof (DateTime?);
+            return typeToCheck == typeof(DateTime) || typeToCheck == typeof(DateTime?);
         }
 
         public static bool IsBoolean(this Type typeToCheck)
         {
-            return typeToCheck == typeof (bool) || typeToCheck == typeof (bool?);
+            return typeToCheck == typeof(bool) || typeToCheck == typeof(bool?);
         }
 
         /// <summary>
-        /// Displays type names using CSharp syntax style. Supports funky generic types.
+        ///     Displays type names using CSharp syntax style. Supports funky generic types.
         /// </summary>
         /// <param name="type">Type to be pretty printed</param>
         /// <returns></returns>
@@ -254,33 +276,36 @@ namespace Baseline
         }
 
         /// <summary>
-        /// Displays type names using CSharp syntax style. Supports funky generic types.
+        ///     Displays type names using CSharp syntax style. Supports funky generic types.
         /// </summary>
         /// <param name="type">Type to be pretty printed</param>
-        /// <param name="selector">Function determining the name of the type to be displayed. Useful if you want a fully qualified name.</param>
+        /// <param name="selector">
+        ///     Function determining the name of the type to be displayed. Useful if you want a fully qualified
+        ///     name.
+        /// </param>
         /// <returns></returns>
         public static string PrettyPrint(this Type type, Func<Type, string> selector)
         {
-            string typeName = selector(type) ?? string.Empty;
+            var typeName = selector(type) ?? string.Empty;
             var typeInfo = type.GetTypeInfo();
             if (!typeInfo.IsGenericType)
             {
                 return typeName;
             }
 
-            Func<Type, string> genericParamSelector = typeInfo.IsGenericTypeDefinition ? t => t.Name : selector;
-            string genericTypeList = String.Join(",", type.GetGenericArguments().Select(genericParamSelector).ToArray());
-            int tickLocation = typeName.IndexOf('`');
+            var genericParamSelector = typeInfo.IsGenericTypeDefinition ? t => t.Name : selector;
+            var genericTypeList = string.Join(",", type.GetGenericArguments().Select(genericParamSelector).ToArray());
+            var tickLocation = typeName.IndexOf('`');
             if (tickLocation >= 0)
             {
                 typeName = typeName.Substring(0, tickLocation);
             }
-            return string.Format("{0}<{1}>", typeName, genericTypeList);
+            return $"{typeName}<{genericTypeList}>";
         }
 
         /// <summary>
-        /// Returns a boolean value indicating whether or not the type is:
-        /// int, long, decimal, short, float, or double
+        ///     Returns a boolean value indicating whether or not the type is:
+        ///     int, long, decimal, short, float, or double
         /// </summary>
         /// <param name="type"></param>
         /// <returns>Bool indicating whether the type is numeric</returns>
@@ -291,8 +316,8 @@ namespace Baseline
 
 
         /// <summary>
-        /// Returns a boolean value indicating whether or not the type is:
-        /// int, long or short
+        ///     Returns a boolean value indicating whether or not the type is:
+        ///     int, long or short
         /// </summary>
         /// <param name="type"></param>
         /// <returns>Bool indicating whether the type is integer based</returns>
@@ -301,35 +326,15 @@ namespace Baseline
             return _integerTypes.Contains(type);
         }
 
-        private static readonly IList<Type> _integerTypes = new List<Type>
-                                                            {
-                                                                typeof (byte),
-                                                                typeof (short),
-                                                                typeof (int),
-                                                                typeof (long),
-                                                                typeof (sbyte),
-                                                                typeof (ushort),
-                                                                typeof (uint),
-                                                                typeof (ulong),
-                                                                typeof (byte?),
-                                                                typeof (short?),
-                                                                typeof (int?),
-                                                                typeof (long?),
-                                                                typeof (sbyte?),
-                                                                typeof (ushort?),
-                                                                typeof (uint?),
-                                                                typeof (ulong?)
-                                                            };
-
         /// <summary>
-        /// Returns a boolean value indicating whether or not the type is:
-        /// decimal, float or double
+        ///     Returns a boolean value indicating whether or not the type is:
+        ///     decimal, float or double
         /// </summary>
         /// <param name="type"></param>
         /// <returns>Bool indicating whether the type is floating point</returns>
         public static bool IsFloatingPoint(this Type type)
         {
-            return type == typeof (decimal) || type == typeof (float) || type == typeof (double);
+            return type == typeof(decimal) || type == typeof(float) || type == typeof(double);
         }
 
 
@@ -345,10 +350,11 @@ namespace Baseline
             return (T) Activator.CreateInstance(closedType, ctorArgument);
         }
 
-        public static T CloseAndBuildAs<T>(this Type openType, object ctorArgument1, object ctorArgument2, params Type[] parameterTypes)
+        public static T CloseAndBuildAs<T>(this Type openType, object ctorArgument1, object ctorArgument2,
+            params Type[] parameterTypes)
         {
             var closedType = openType.MakeGenericType(parameterTypes);
-            return (T)Activator.CreateInstance(closedType, ctorArgument1, ctorArgument2);
+            return (T) Activator.CreateInstance(closedType, ctorArgument1, ctorArgument2);
         }
 
         public static bool PropertyMatches(this PropertyInfo prop1, PropertyInfo prop2)
@@ -367,25 +373,30 @@ namespace Baseline
         }
 
 
+        public static Type DeriveElementType(this Type type)
+        {
+            return type.GetElementType() ?? type.GetGenericArguments().FirstOrDefault();
+        }
+
         public static Type IsAnEnumerationOf(this Type type)
         {
-            if(!type.Closes(typeof(IEnumerable<>)))
+            if (!type.Closes(typeof(IEnumerable<>)))
             {
                 throw new Exception("Duh, its gotta be enumerable");
             }
 
-            if(type.IsArray)
+            if (type.IsArray)
             {
                 return type.GetElementType();
             }
 
-            if(type.GetTypeInfo().IsGenericType)
+            if (type.GetTypeInfo().IsGenericType)
             {
                 return type.GetGenericArguments()[0];
             }
 
 
-            throw new Exception("I don't know how to figure out what this is a collection of. Can you tell me? {0}".ToFormat(type));
+            throw new Exception($"I don't know how to figure out what this is a collection of. Can you tell me? {type}");
         }
-}
+    }
 }
