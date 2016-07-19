@@ -29,10 +29,7 @@ namespace Baseline
         }
 
 
-        public List<string> List
-        {
-            get { return _list; }
-        }
+        public List<string> List => _list;
 
         public override string ToString()
         {

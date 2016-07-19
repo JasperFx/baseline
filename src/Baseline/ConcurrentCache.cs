@@ -6,17 +6,21 @@ using System.Linq;
 
 namespace Baseline
 {
+    /// <summary>
+    /// Convenience wrapper around ConcurrentDictionary to auto-fill
+    /// in missing values and simplify usage
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
     public class ConcurrentCache<TKey, TValue> : IEnumerable<TValue>
     {
         private readonly ConcurrentDictionary<TKey, TValue> _values;
-
-        private Func<TValue, TKey> _getKey = delegate { throw new NotImplementedException(); };
 
         private Action<TValue> _onAddition = x => { };
 
         private Func<TKey, TValue> _onMissing = delegate(TKey key)
         {
-            var message = string.Format("Key '{0}' could not be found", key);
+            var message = $"Key '{key}' could not be found";
             throw new KeyNotFoundException(message);
         };
 
@@ -25,6 +29,10 @@ namespace Baseline
         {
         }
 
+        /// <summary>
+        /// Build a cache that can fill in missing values automatically
+        /// </summary>
+        /// <param name="onMissing"></param>
         public ConcurrentCache(Func<TKey, TValue> onMissing)
             : this(new ConcurrentDictionary<TKey, TValue>(), onMissing)
         {
@@ -41,6 +49,9 @@ namespace Baseline
             _values = new ConcurrentDictionary<TKey, TValue>(dictionary);
         }
 
+        /// <summary>
+        /// Perform an action on an item when it is first added to the cache
+        /// </summary>
         public Action<TValue> OnAddition
         {
             set { _onAddition = value; }
@@ -51,16 +62,9 @@ namespace Baseline
             set { _onMissing = value; }
         }
 
-        public Func<TValue, TKey> GetKey
-        {
-            get { return _getKey; }
-            set { _getKey = value; }
-        }
+        public Func<TValue, TKey> GetKey { get; set; } = delegate { throw new NotImplementedException(); };
 
-        public int Count
-        {
-            get { return _values.Count; }
-        }
+        public int Count => _values.Count;
 
         [Obsolete("Use First() or FirstOrDefault().")]
         public TValue First
@@ -106,6 +110,11 @@ namespace Baseline
             Fill(key, _onMissing);
         }
 
+        /// <summary>
+        /// Delegates to GetOrAdd() on ConcurrentDictionary
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="onMissing"></param>
         public void Fill(TKey key, Func<TKey, TValue> onMissing)
         {
             bool newValue = false;

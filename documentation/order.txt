@@ -1,0 +1,13 @@
+strings
+files
+reflection
+timespans
+safedispose
+dictionaries
+enumerables
+filehashing
+numbers
+locks
+streams
+filepatsh
+conversion

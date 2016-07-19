@@ -5,18 +5,17 @@ using System.Linq;
 
 namespace Baseline
 {
+    [Obsolete("Deprecated because it isn't terribly efficient, but widely used downstream")]
     public class Cache<TKey, TValue> : IEnumerable<TValue>
     {
         private readonly object _locker = new object();
         private readonly IDictionary<TKey, TValue> _values;
 
-        private Func<TValue, TKey> _getKey = delegate { throw new NotImplementedException(); };
-
         private Action<TValue> _onAddition = x => { };
 
         private Func<TKey, TValue> _onMissing = delegate(TKey key)
         {
-            var message = string.Format("Key '{0}' could not be found", key);
+            var message = $"Key '{key}' could not be found";
             throw new KeyNotFoundException(message);
         };
 
@@ -51,16 +50,9 @@ namespace Baseline
             set { _onMissing = value; }
         }
 
-        public Func<TValue, TKey> GetKey
-        {
-            get { return _getKey; }
-            set { _getKey = value; }
-        }
+        public Func<TValue, TKey> GetKey { get; set; } = delegate { throw new NotImplementedException(); };
 
-        public int Count
-        {
-            get { return _values.Count; }
-        }
+        public int Count => _values.Count;
 
         public TValue First
         {
