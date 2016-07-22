@@ -67,6 +67,9 @@ namespace Baseline
         [XmlAttribute]
         public string Exclude { get; set; }
 
+        /// <summary>
+        /// Search in child directories?
+        /// </summary>
         public bool DeepSearch { get; set; }
 
         public void AppendExclude(string exclude)
@@ -174,7 +177,7 @@ namespace Baseline
 
         public override string ToString()
         {
-            return string.Format("Include: {0}, Exclude: {1}", Include, Exclude);
+            return $"Include: {Include}, Exclude: {Exclude}";
         }
 
         public static FileSet Everything()

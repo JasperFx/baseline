@@ -107,5 +107,11 @@ $                   # match the entire string";
         {
             return new TimeSpan(0, 0, number);
         }
+
+
+        public static TimeSpan Milliseconds(this int number)
+        {
+            return TimeSpan.FromMilliseconds(number);
+        }
     }
 }

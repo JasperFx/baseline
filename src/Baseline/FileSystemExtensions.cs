@@ -19,24 +19,7 @@ namespace Baseline
             fileSystem.CreateDirectory(directory);
         }
 
-        public static string FindFileInDirectories(this IFileSystem fileSystem, IEnumerable<string> directories, string fileName)
-        {
-            return directories
-                .Select(dir => dir.AppendPath(fileName))
-                .FirstOrDefault(fileSystem.FileExists);          
-        }
 
-        public static string FindDirectoryInDirectories(this IFileSystem fileSystem, IEnumerable<string> directories, string directory)
-        {
-            return directories
-                .Select(dir => dir.AppendPath(directory))
-                .FirstOrDefault(fileSystem.DirectoryExists);
-        }
-
-        public static string FindFileInDirectoryArray(this IFileSystem fileSystem, string filename, params string[] directories)
-        {
-            return fileSystem.FindFileInDirectories(directories, filename);
-        }
 
         public static void CopyToDirectory(this IFileSystem fileSystem, string source, string destination)
         {
@@ -48,7 +31,6 @@ namespace Baseline
         {
             system.AlterFlatFile(path, list => configuration(new FlatFileWriter(list)));
         }
-
 
 
         public static bool DirectoryExists(this IFileSystem fileSystem, params string[] pathParts)

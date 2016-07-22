@@ -24,6 +24,13 @@ namespace Baseline
 
         string ReadStringFromFile(string filename);
         void WriteObjectToFile(string filename, object target);
+
+        /// <summary>
+        /// Uses Xml serialization to read an object of type T from a text file
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="filename"></param>
+        /// <returns></returns>
 		T LoadFromFile<T>(string filename) where T : new();
 		T LoadFromFileOrThrow<T>(string filename) where T : new();
 

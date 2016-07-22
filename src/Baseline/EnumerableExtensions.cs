@@ -8,12 +8,24 @@ namespace Baseline
 {
     public static class GenericEnumerableExtensions
     {
+        /// <summary>
+        /// Adds the value to the list if it does not already exist
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="value"></param>
         public static void Fill<T>(this IList<T> list, T value)
         {
             if (list.Contains(value)) return;
             list.Add(value);
         }
 
+        /// <summary>
+        /// Adds a series of values to a list if they do not already exist in the list
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="values"></param>
         public static void Fill<T>(this IList<T> list, IEnumerable<T> values)
         {
             list.AddRange(values.Where(v => !list.Contains(v)));
@@ -41,7 +53,7 @@ namespace Baseline
         /// <returns></returns>
         public static string Join(this string[] values, string separator)
         {
-            return String.Join(separator, values);
+            return string.Join(separator, values);
         }
 
         /// <summary>
@@ -95,6 +107,14 @@ namespace Baseline
             return values;
         }
 
+        /// <summary>
+        /// Returns the first non-null value from executing the func against the enumerable
+        /// </summary>
+        /// <typeparam name="TItem"></typeparam>
+        /// <typeparam name="TReturn"></typeparam>
+        /// <param name="enumerable"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
         public static TReturn FirstValue<TItem, TReturn>(this IEnumerable<TItem> enumerable, Func<TItem, TReturn> func)
             where TReturn : class
         {
@@ -107,6 +127,13 @@ namespace Baseline
             return null;
         }
 
+        /// <summary>
+        /// Add many items to a list
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="items"></param>
+        /// <returns></returns>
         public static IList<T> AddMany<T>(this IList<T> list, params T[] items)
         {
             return list.AddRange(items);
@@ -123,27 +150,6 @@ namespace Baseline
         {
             items.Each(list.Add);
             return list;
-        }
-
-        public static bool IsEqualTo<T>(this IEnumerable<T> actual, IEnumerable<T> expected)
-        {
-            var actualList = actual.ToArray();
-            var expectedList = expected.ToArray();
-
-            if (actualList.Length != expectedList.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < actualList.Length; ++i)
-            {
-                if (!actualList[i].Equals(expectedList[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         public static IEnumerable<T> UnionWith<T>(this IEnumerable<T> first, params T[] second)
