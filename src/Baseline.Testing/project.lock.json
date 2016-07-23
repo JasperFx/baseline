@@ -2663,7 +2663,7 @@
           "lib/dotnet/xunit.runner.utility.dotnet.dll": {}
         }
       },
-      "Baseline/1.0.0": {
+      "Baseline/1.1.0": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.3",
         "dependencies": {
@@ -3065,7 +3065,7 @@
           "lib/net35/xunit.runner.utility.desktop.dll": {}
         }
       },
-      "Baseline/1.0.0": {
+      "Baseline/1.1.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
         "frameworkAssemblies": [
@@ -8277,7 +8277,7 @@
         "xunit.runner.utility.nuspec"
       ]
     },
-    "Baseline/1.0.0": {
+    "Baseline/1.1.0": {
       "type": "project",
       "path": "../Baseline/project.json",
       "msbuildProject": "../Baseline/Baseline.xproj"

@@ -398,5 +398,40 @@ namespace Baseline
 
             throw new Exception($"I don't know how to figure out what this is a collection of. Can you tell me? {type}");
         }
+
+
+        public static void ForAttribute<T>(this Type type, Action<T> action) where T : Attribute
+        {
+            var atts = type.GetTypeInfo().GetCustomAttributes(typeof(T));
+            foreach (T att in atts)
+            {
+                action(att);
+            }
+        }
+
+        public static void ForAttribute<T>(this Type type, Action<T> action, Action elseDo)
+            where T : Attribute
+        {
+            var atts = type.GetTypeInfo().GetCustomAttributes(typeof(T)).ToArray();
+            foreach (T att in atts)
+            {
+                action(att);
+            }
+
+            if (!atts.Any())
+            {
+                elseDo();
+            }
+        }
+
+        public static bool HasAttribute<T>(this Type type) where T : Attribute
+        {
+            return type.GetTypeInfo().GetCustomAttributes<T>().Any();
+        }
+
+        public static T GetAttribute<T>(this Type type) where T : Attribute
+        {
+            return type.GetTypeInfo().GetCustomAttributes<T>().FirstOrDefault();
+        }
     }
 }
