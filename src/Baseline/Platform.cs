@@ -10,7 +10,7 @@ namespace Baseline
         {
             var name = GetUname();
             IsWindows = name == string.Empty;
-            IsDarwin = string.Equals(GetUname(), "Darwin", StringComparison.Ordinal);
+            IsDarwin = string.Equals(name, "Darwin", StringComparison.Ordinal);
             IsLinux = (!IsWindows && !IsDarwin);
         }
 
