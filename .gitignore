@@ -198,3 +198,6 @@ FakesAssemblies/
 
 # IDEA related projects
 .idea/
+
+# Visual Studio Code
+.vscode/
