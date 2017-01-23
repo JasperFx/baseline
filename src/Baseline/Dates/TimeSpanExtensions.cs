@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Baseline
+namespace Baseline.Dates
 {
     public static class TimeSpanExtensions
     {

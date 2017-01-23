@@ -1,9 +1,8 @@
 using System;
-using Xunit;
-using Baseline;
 using Shouldly;
+using Xunit;
 
-namespace Baseline.Testing
+namespace Baseline.Testing.Dates
 {
     public class DateTester
     {

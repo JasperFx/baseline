@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 
-namespace Baseline
+namespace Baseline.Dates
 {
     public class LocalTime : IComparable<LocalTime>
     {

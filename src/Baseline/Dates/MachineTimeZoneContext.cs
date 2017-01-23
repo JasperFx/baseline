@@ -1,6 +1,6 @@
 using System;
 
-namespace Baseline
+namespace Baseline.Dates
 {
     public class MachineTimeZoneContext : ITimeZoneContext
     {

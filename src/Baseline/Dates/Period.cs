@@ -1,7 +1,7 @@
 using System;
 using Baseline.Conversion;
 
-namespace Baseline
+namespace Baseline.Dates
 {
     public class Period
     {

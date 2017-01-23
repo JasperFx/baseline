@@ -5,7 +5,7 @@
   },
   "dependencies": {
     "xunit": "2.1.0",
-    "dotnet-test-xunit": "1.0.0-rc3-build10019",
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Shouldly": "2.8.2",
     "NSubstitute": "2.0.0-alpha003",
     "Baseline": "1.1.0"

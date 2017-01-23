@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Grab bag of generic utilities and extension methods for .Net development",
   "authors": [ "Jeremy D. Miller", "Brandon Behrens", "Andrew Kharlamov" ],
   "packOptions": {

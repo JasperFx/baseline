@@ -1,9 +1,9 @@
 using System;
+using Baseline.Dates;
 using Shouldly;
 using Xunit;
-using Baseline;
 
-namespace Baseline.Testing
+namespace Baseline.Testing.Dates
 {
     public class SystemTimeTester
     {
