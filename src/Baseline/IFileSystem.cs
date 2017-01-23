@@ -54,12 +54,22 @@ namespace Baseline
         IEnumerable<string> ChildDirectoriesFor(string directory);
         IEnumerable<string> FindFiles(string directory, FileSet searchSpecification);
 
+        /// <summary>
+        /// Reads a text file one line at a time and calls back to reader
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="reader"></param>
         void ReadTextFile(string path, Action<string> reader);
         void MoveFiles(string from, string to);
 
         string GetDirectory(string path);
         string GetFileName(string path);
 
+        /// <summary>
+        /// Reads contents of a text file by line, processes modifications, then saves
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="alteration"></param>
         void AlterFlatFile(string path, Action<List<string>> alteration);
         void Copy(string source, string destination, CopyBehavior behavior);
     }
