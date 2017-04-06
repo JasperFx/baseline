@@ -25,6 +25,11 @@
         "portable-net45+win8"
       ]
     },
+    "net46": {
+      "dependencies": {
+        "Microsoft.NETCore.Platforms": "1.0.1"
+      }
+    },
     "net451": {
       "dependencies": {
         "Microsoft.NETCore.Platforms": "1.0.1"
