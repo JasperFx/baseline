@@ -61,7 +61,7 @@ end
 
 desc 'Restore the packages'
 task :restore => [:clean, :install] do
-  sh 'dotnet restore src/Baseline.sln'
+  sh 'dotnet restore src'
 end
 
 desc 'Run the unit tests'
