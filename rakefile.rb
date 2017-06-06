@@ -33,9 +33,7 @@ end
 
 desc "Update the version information for the build"
 task :version do
-  file = File.read("src/Baseline/project.json", :encoding => 'bom|utf-8')
-  project_hash = JSON.parse(file)
-  project_version = project_hash["version"]
+  project_version = "1.4.0"
   build_number = project_version.gsub(/\*$/, build_revision) if project_version.include? "-*"
   build_number = "#{project_version}.#{build_revision}" unless project_version.include? "-*"
   
@@ -63,19 +61,19 @@ end
 
 desc 'Restore the packages'
 task :restore => [:clean, :install] do
-  sh 'dotnet restore'
+  sh 'dotnet restore src/Baseline.sln'
 end
 
 desc 'Run the unit tests'
 task :test => [:restore] do
-	sh 'dotnet test src/Baseline.Testing'
+	sh 'dotnet test src/Baseline.Testing/Baseline.Testing.csproj'
 end
 
 desc "Pack up the nupkg file"
 task :pack => [:restore] do
 	Dir.mkdir "artifacts"
   ENV["DOTNET_BUILD_VERSION"] = build_revision
-	sh "dotnet pack src/Baseline --output ./artifacts --configuration Release"
+	sh "dotnet pack src/Baseline/Baseline.csproj --output ./../../artifacts --configuration Release"
 end
 
 
