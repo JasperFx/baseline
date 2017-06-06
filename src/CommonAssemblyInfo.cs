@@ -1,4 +1,4 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
-[assembly: AssemblyTrademark("5ca24e155da1d8a988d70a1991504b2a890dd2d4")]
-[assembly: AssemblyInformationalVersion("1.4.0.51010")]
+[assembly: AssemblyTrademark("15a887922df6fc12d01c1293c45c80d570c32818")]
+[assembly: AssemblyInformationalVersion("1.4.0.51117")]

@@ -61,7 +61,7 @@ end
 
 desc 'Restore the packages'
 task :restore => [:clean, :install] do
-  sh 'dotnet restore src'
+  sh 'dotnet restore src/Baseline.Testing/Baseline.Testing.csproj'
 end
 
 desc 'Run the unit tests'
