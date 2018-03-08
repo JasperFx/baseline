@@ -33,7 +33,7 @@ end
 
 desc "Update the version information for the build"
 task :version do
-  project_version = "1.4.0"
+  project_version = "1.5.0"
   build_number = project_version.gsub(/\*$/, build_revision) if project_version.include? "-*"
   build_number = "#{project_version}.#{build_revision}" unless project_version.include? "-*"
   
