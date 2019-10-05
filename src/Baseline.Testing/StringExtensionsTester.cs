@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using NSubstitute;
@@ -27,11 +28,12 @@ namespace Baseline.Testing
         [Fact]
         public void if_not_null_positive()
         {
-            var action = Substitute.For<Action<string>>();
+            string captured = null;
+            Action<string> action = s => captured = s;
 
             "a".IfNotNull(action);
 
-            action.Received().Invoke("a");
+            captured.ShouldBe("a");
         }
 
         [Fact]
@@ -179,7 +181,9 @@ e
         [Fact]
         public void read_lines_to_an_action()
         {
-            var action = Substitute.For<Action<string>>();
+            var list = new List<string>();
+
+            Action<string> action = x => list.Add(x);
 
             var text = @"a
 b
@@ -190,12 +194,9 @@ e
 
 
             text.ReadLines(action);
+            
+            list.ShouldHaveTheSameElementsAs("a", "b", "c", "d", "e");
 
-            action.Received().Invoke("a");
-            action.Received().Invoke("b");
-            action.Received().Invoke("c");
-            action.Received().Invoke("d");
-            action.Received().Invoke("e");
         }
 
         [Fact]

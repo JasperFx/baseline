@@ -1,4 +1,4 @@
-version: 1.5.0.{build}
+version: 2.0.0.{build}
 
 configuration: Release
 
@@ -8,6 +8,8 @@ environment:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
+install:
+  - cmd: choco install dotnetcore-sdk -y
 
 
 before_build:

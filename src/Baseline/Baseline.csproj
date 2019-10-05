@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <Description>Grab bag of generic utilities and extension methods for .Net development</Description>
-    <VersionPrefix>1.5.0</VersionPrefix>
+    <VersionPrefix>2.0.0</VersionPrefix>
     <Authors>Jeremy D. Miller;Brandon Behrens;Andrew Kharlamov</Authors>
-    <TargetFrameworks>net451;net46;netstandard1.3;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <AssemblyName>Baseline</AssemblyName>
     <PackageId>Baseline</PackageId>
     <PackageProjectUrl>https://github.com/JasperFX/Baseline</PackageProjectUrl>
@@ -19,12 +19,5 @@
     <Compile Include="..\CommonAssemblyInfo.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />   
-    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
-    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
-  </ItemGroup>
 
 </Project>
