@@ -5,7 +5,7 @@ BUILD_VERSION = '2.0.0'
 tc_build_number = ENV["BUILD_NUMBER"]
 build_revision = tc_build_number || Time.new.strftime('5%H%M')
 
-task :ci => [:version, :default, :pack]
+task :ci => [:default, :pack]
 
 task :default => [:test]
 
