@@ -25,7 +25,7 @@ task :test do
 end
 
 desc "Pack up the nupkg file"
-task :pack => [:restore] do
+task :pack => do
 	Dir.mkdir "artifacts"
   ENV["DOTNET_BUILD_VERSION"] = build_revision
 	sh "dotnet pack src/Baseline/Baseline.csproj --output ./artifacts --configuration Release"
