@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net46;netcoreapp2.2;netcoreapp3.0</TargetFrameworks>
+
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="Shouldly" Version="3.0.2" />
+        <PackageReference Include="NSubstitute" Version="3.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BaselineTypeDiscovery\BaselineTypeDiscovery.csproj" />
+      <ProjectReference Include="..\Baseline\Baseline.csproj" />
+      <ProjectReference Include="..\Widgets1\Widgets1.csproj" />
+      <ProjectReference Include="..\Widgets2\Widgets2.csproj" />
+      <ProjectReference Include="..\Widgets3\Widgets3.csproj" />
+      <ProjectReference Include="..\Widgets4\Widgets4.csproj" />
+      <ProjectReference Include="..\Widgets5\Widgets5.csproj" />
+    </ItemGroup>
+
+</Project>

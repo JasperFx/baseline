@@ -22,6 +22,7 @@ end
 desc 'Run the unit tests'
 task :test do
 	sh 'dotnet test src/Baseline.Testing/Baseline.Testing.csproj'
+	sh 'dotnet test src/BaselineTypeDiscovery.Testing/BaselineTypeDiscovery.Testing.csproj'
 end
 
 desc "Pack up the nupkg file"
