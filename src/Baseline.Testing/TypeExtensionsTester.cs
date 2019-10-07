@@ -51,6 +51,7 @@ namespace Baseline.Testing
             typeof (ConcreteListener).Closes(typeof (IListener<>)).ShouldBeTrue();
         }
 
+        [Fact]
         public void closes_applies_to_concrete_non_generic_types()
         {
             typeof(Service2).Closes(typeof(Service2<>)).ShouldBeFalse();
