@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Loader;
 
 #if !NET461
-
+using System.Runtime.Loader;
 #endif
 
 namespace BaselineTypeDiscovery
