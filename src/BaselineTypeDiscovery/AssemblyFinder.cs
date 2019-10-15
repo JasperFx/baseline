@@ -10,12 +10,12 @@ using System.Runtime.Loader;
 
 namespace BaselineTypeDiscovery
 {
-	internal static class LamarAssemblyContext
+	internal static class BaselineAssemblyContext
 	{
 #if NET461
-		public static readonly ILamarAssemblyLoadContext Loader = new CustomAssemblyLoadContext();
+		public static readonly IBaselineAssemblyLoadContext Loader = new CustomAssemblyLoadContext();
 #else
-		public static readonly ILamarAssemblyLoadContext Loader = new AssemblyLoadContextWrapper(System.Runtime.Loader.AssemblyLoadContext.Default);
+		public static readonly IBaselineAssemblyLoadContext Loader = new AssemblyLoadContextWrapper(System.Runtime.Loader.AssemblyLoadContext.Default);
 #endif
 	}
 
@@ -52,13 +52,13 @@ namespace BaselineTypeDiscovery
 
                 try
                 {
-                    assembly = LamarAssemblyContext.Loader.LoadFromAssemblyName(new AssemblyName(name));
+                    assembly = BaselineAssemblyContext.Loader.LoadFromAssemblyName(new AssemblyName(name));
                 }
                 catch (Exception)
                 {
                     try
                     {
-                        assembly = LamarAssemblyContext.Loader.LoadFromAssemblyPath(file);
+                        assembly = BaselineAssemblyContext.Loader.LoadFromAssemblyPath(file);
                     }
                     catch (Exception)
                     {
@@ -93,7 +93,7 @@ namespace BaselineTypeDiscovery
         }
     }
 		
-        internal interface ILamarAssemblyLoadContext
+        internal interface IBaselineAssemblyLoadContext
         {
             Assembly LoadFromStream(Stream assembly);
             Assembly LoadFromAssemblyName(AssemblyName assemblyName);
@@ -101,20 +101,20 @@ namespace BaselineTypeDiscovery
         }
 
 #if !NET461
-	public sealed class CustomAssemblyLoadContext : AssemblyLoadContext, ILamarAssemblyLoadContext
+	public sealed class CustomAssemblyLoadContext : AssemblyLoadContext, IBaselineAssemblyLoadContext
 	{
 		protected override Assembly Load(AssemblyName assemblyName)
 		{
 			return Assembly.Load(assemblyName);
 		}
 
-		Assembly ILamarAssemblyLoadContext.LoadFromAssemblyName(AssemblyName assemblyName)
+		Assembly IBaselineAssemblyLoadContext.LoadFromAssemblyName(AssemblyName assemblyName)
 		{
 			return Load(assemblyName);
 		}
 	}
 
-	public sealed class AssemblyLoadContextWrapper : ILamarAssemblyLoadContext
+	public sealed class AssemblyLoadContextWrapper : IBaselineAssemblyLoadContext
 	{
 		private readonly AssemblyLoadContext ctx;
 
@@ -139,7 +139,7 @@ namespace BaselineTypeDiscovery
 		}
 	}
 #else
-        public class CustomAssemblyLoadContext : ILamarAssemblyLoadContext
+        public class CustomAssemblyLoadContext : IBaselineAssemblyLoadContext
         {
             public Assembly LoadFromStream(Stream assembly)
             {
@@ -155,7 +155,7 @@ namespace BaselineTypeDiscovery
                 }
             }
 		
-            Assembly ILamarAssemblyLoadContext.LoadFromAssemblyName(AssemblyName assemblyName)
+            Assembly IBaselineAssemblyLoadContext.LoadFromAssemblyName(AssemblyName assemblyName)
             {
                 return Assembly.Load(assemblyName);
             }
