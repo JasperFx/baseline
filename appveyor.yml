@@ -21,4 +21,4 @@ build_script:
 test: off
 
 artifacts:
-  - path: '**\Baseline.*.nupkg' # find all NuGet packages recursively
+  - path: '**\Baseline*.nupkg' # find all NuGet packages recursively
