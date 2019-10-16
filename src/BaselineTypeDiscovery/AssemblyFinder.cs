@@ -19,8 +19,18 @@ namespace BaselineTypeDiscovery
 #endif
 	}
 
-		public static class AssemblyFinder
+    
+    /// <summary>
+    /// Utility to discover and load assemblies installed in your application for extensibility or plugin schems
+    /// </summary>
+    public static class AssemblyFinder
     {
+        /// <summary>
+        /// Find assemblies in the application's binary path
+        /// </summary>
+        /// <param name="logFailure">Take an action when an assembly file could not be loaded</param>
+        /// <param name="includeExeFiles">Optionally include *.exe files</param>
+        /// <returns></returns>
         public static IEnumerable<Assembly> FindAssemblies(Action<string> logFailure, bool includeExeFiles)
         {
             string path;
@@ -34,6 +44,13 @@ namespace BaselineTypeDiscovery
             return FindAssemblies(path, logFailure, includeExeFiles);
         }
 
+        /// <summary>
+        /// Find assemblies in the given path
+        /// </summary>
+        /// <param name="assemblyPath">The path to probe for assembly files</param>
+        /// <param name="logFailure">Take an action when an assembly file could not be loaded</param>
+        /// <param name="includeExeFiles">Optionally include *.exe files</param>
+        /// <returns></returns>
         public static IEnumerable<Assembly> FindAssemblies(string assemblyPath, Action<string> logFailure, bool includeExeFiles)
         {
             var assemblies = findAssemblies(assemblyPath, logFailure, includeExeFiles).OrderBy(x => x.GetName().Name).ToArray();
@@ -84,6 +101,13 @@ namespace BaselineTypeDiscovery
         }
 
 
+        /// <summary>
+        /// Find assembly files matching a given filter
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="onDirectoryFound"></param>
+        /// <param name="includeExeFiles"></param>
+        /// <returns></returns>
         public static IEnumerable<Assembly> FindAssemblies(Func<Assembly, bool> filter,
             Action<string> onDirectoryFound = null, bool includeExeFiles=false)
         {
