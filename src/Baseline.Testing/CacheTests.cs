@@ -66,31 +66,6 @@ namespace Baseline.Testing
         }
 
         [Fact]
-        public void predicate_exists()
-        {
-            cache.Fill(Key, 42);
-            cache.Exists(i => i == 42).ShouldBeTrue();
-        }
-
-        [Fact]
-        public void predicate_finds()
-        {
-            cache.Fill(Key, 42);
-            cache.Find(i => i == 42).ShouldBe(42);
-            cache.Find(i => i == 43).ShouldBe(0);
-        }
-
-        [Fact]
-        public void get_first_value()
-        {
-            cache.Fill(Key, 42);
-            cache.Fill("anotherKey", 99);
-            cache.First.ShouldBe(42);
-            cache.ClearAll();
-            cache.First.ShouldBe(0);
-        }
-
-        [Fact]
         public void get_all_keys()
         {
             cache.Fill(Key, 42);
@@ -135,9 +110,9 @@ namespace Baseline.Testing
         public void can_remove()
         {
             cache[Key] = 42;
-            cache.Has(Key).ShouldBeTrue();
+            cache.GetAllKeys().ShouldContain(Key);
             cache.Remove(Key);
-            cache.Has(Key).ShouldBeFalse();
+            cache.GetAllKeys().ShouldNotContain(Key);
         }
 
         [Fact]
@@ -178,22 +153,6 @@ namespace Baseline.Testing
             cache["a"].ShouldBe(1); // did not overwrite
         }
 
-        [Fact]
-        public void WithValue_positive()
-        {
-            cache["b"] = 2;
 
-            int number = 0;
-
-            cache.WithValue("b", i => number = i);
-
-            number.ShouldBe(2);
-        }
-
-        [Fact]
-        public void WithValue_negative()
-        {
-            cache.WithValue("b", i => { throw new Exception("Should not be called"); });
-        }
     }
 }

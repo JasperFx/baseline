@@ -2,14 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ImTools;
 
 namespace Baseline
 {
-    [Obsolete("Deprecated because it isn't terribly efficient, but widely used downstream")]
     public class Cache<TKey, TValue> : IEnumerable<TValue>
     {
         private readonly object _locker = new object();
-        private readonly IDictionary<TKey, TValue> _values;
+        private ImHashMap<TKey, TValue> _values = ImHashMap<TKey, TValue>.Empty;
 
         private Action<TValue> _onAddition = x => { };
 
@@ -37,55 +37,50 @@ namespace Baseline
 
         public Cache(IDictionary<TKey, TValue> dictionary)
         {
-            _values = dictionary;
+            foreach (var pair in dictionary)
+            {
+                _values = _values.AddOrUpdate(pair.Key, pair.Value);
+            }
         }
 
         public Action<TValue> OnAddition
         {
-            set { _onAddition = value; }
+            set => _onAddition = value;
         }
 
         public Func<TKey, TValue> OnMissing
         {
-            set { _onMissing = value; }
+            set => _onMissing = value;
         }
 
         public Func<TValue, TKey> GetKey { get; set; } = delegate { throw new NotImplementedException(); };
 
-        public int Count => _values.Count;
+        public int Count => _values.Enumerate().Count();
 
-        public TValue First
-        {
-            get
-            {
-                foreach (var pair in _values)
-                {
-                    return pair.Value;
-                }
-
-                return default(TValue);
-            }
-        }
 
         public TValue this[TKey key]
         {
             get
             {
-                FillDefault(key);
+                if (_values.TryFind(key, out var value))
+                {
+                    return value;
+                }
 
-                return _values[key];
+                lock (_locker)
+                {
+                    value = _onMissing(key);
+                    _onAddition(value);
+                    _values = _values.AddOrUpdate(key, value);
+                }
+
+                return value;
             }
             set
             {
+                _values = _values.AddOrUpdate(key, value);
+                
                 _onAddition(value);
-                if (_values.ContainsKey(key))
-                {
-                    _values[key] = value;
-                }
-                else
-                {
-                    _values.Add(key, value);
-                }
             }
         }
 
@@ -96,7 +91,7 @@ namespace Baseline
 
         public IEnumerator<TValue> GetEnumerator()
         {
-            return _values.Values.GetEnumerator();
+            return _values.Enumerate().Select(x => x.Value).GetEnumerator();
         }
 
         /// <summary>
@@ -111,111 +106,60 @@ namespace Baseline
 
         public void Fill(TKey key, Func<TKey, TValue> onMissing)
         {
-            if (!_values.ContainsKey(key))
+            if (!_values.TryFind(key, out var existing))
             {
                 lock (_locker)
                 {
-                    if (!_values.ContainsKey(key))
-                    {
-                        
-                        var value = onMissing(key);
-                        _onAddition(value);
-                        _values.Add(key, value);
-                    }
+                    var value = onMissing(key);
+                    _onAddition(value);
+                    _values = _values.AddOrUpdate(key, value);
                 }
             }
         }
 
         public void Fill(TKey key, TValue value)
         {
-            if (_values.ContainsKey(key))
+            if (!_values.TryFind(key, out var existing))
             {
-                return;
-            }
-
-            _values.Add(key, value);
-        }
-
-        public void Each(Action<TValue> action)
-        {
-            foreach (var pair in _values)
-            {
-                action(pair.Value);
-            }
-        }
-
-        public void Each(Action<TKey, TValue> action)
-        {
-            foreach (var pair in _values)
-            {
-                action(pair.Key, pair.Value);
-            }
-        }
-
-        public bool Has(TKey key)
-        {
-            return _values.ContainsKey(key);
-        }
-
-        public bool Exists(Predicate<TValue> predicate)
-        {
-            var returnValue = false;
-
-            Each(delegate(TValue value) { returnValue |= predicate(value); });
-
-            return returnValue;
-        }
-
-        public TValue Find(Predicate<TValue> predicate)
-        {
-            foreach (var pair in _values)
-            {
-                if (predicate(pair.Value))
+                lock (_locker)
                 {
-                    return pair.Value;
+                    _onAddition(value);
+                    _values = _values.AddOrUpdate(key, value);
                 }
             }
+        }
 
-            return default(TValue);
+
+        public bool TryFind(TKey key, out TValue value)
+        {
+            return _values.TryFind(key, out value);
         }
 
         public TKey[] GetAllKeys()
         {
-            return _values.Keys.ToArray();
+            return _values.Enumerate().Select(x => x.Key).ToArray();
         }
-
-        public TValue[] GetAll()
-        {
-            return _values.Values.ToArray();
-        }
-
+        
         public void Remove(TKey key)
         {
-            if (_values.ContainsKey(key))
-            {
-                _values.Remove(key);
-            }
+            _values = _values.Remove(key);
         }
 
         public void ClearAll()
         {
-            _values.Clear();
+            _values = ImHashMap<TKey, TValue>.Empty;
         }
-
-        public bool WithValue(TKey key, Action<TValue> callback)
-        {
-            if (Has(key))
-            {
-                callback(this[key]);
-                return true;
-            }
-
-            return false;
-        }
-
+        
         public IDictionary<TKey, TValue> ToDictionary()
         {
-            return new Dictionary<TKey, TValue>(_values);
+            var dict = new Dictionary<TKey, TValue>();
+
+            foreach (var pair in _values.Enumerate())
+            {
+                dict.Add(pair.Key, pair.Value);
+            }
+
+            return dict;
         }
     }
 }
