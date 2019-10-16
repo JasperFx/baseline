@@ -30,6 +30,7 @@ task :pack do
 	Dir.mkdir "artifacts"
   ENV["DOTNET_BUILD_VERSION"] = build_revision
 	sh "dotnet pack src/Baseline/Baseline.csproj --output ./artifacts --configuration Release"
+	sh "dotnet pack src/BaselineTypeDiscovery/BaselineTypeDiscovery.csproj --output ./artifacts --configuration Release"
 end
 
 
