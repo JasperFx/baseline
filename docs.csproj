@@ -1,10 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <AssemblyName>Documentation</AssemblyName>
   </PropertyGroup>
-
   <ItemGroup>
     <DotNetCliToolReference Include="dotnet-stdocs" Version="1.1.1" />
   </ItemGroup>
