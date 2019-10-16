@@ -9,10 +9,13 @@
     <PackageId>Baseline</PackageId>
     <PackageProjectUrl>https://github.com/JasperFX/Baseline</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/JasperFX/Baseline/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/JasperFx/baseline/master/documentation/content/images/baseline.png</PackageIconUrl>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+
+    
   </PropertyGroup>
 
   <ItemGroup>
