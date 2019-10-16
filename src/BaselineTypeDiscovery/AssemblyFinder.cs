@@ -36,10 +36,20 @@ namespace BaselineTypeDiscovery
 
         public static IEnumerable<Assembly> FindAssemblies(string assemblyPath, Action<string> logFailure, bool includeExeFiles)
         {
+            var assemblies = findAssemblies(assemblyPath, logFailure, includeExeFiles).OrderBy(x => x.GetName().Name).ToArray();
+            var names = assemblies.Select(x => x.GetName().Name);
+
+            Assembly[] FindDependencies(Assembly a) => assemblies.Where(x => names.Contains(x.GetName().Name)).ToArray();
+
+            return assemblies.TopologicalSort((Func<Assembly, Assembly[]>) FindDependencies, throwOnCycle:false);
+        }
+
+        private static IEnumerable<Assembly> findAssemblies(string assemblyPath, Action<string> logFailure, bool includeExeFiles)
+        {
             var dllFiles = Directory.EnumerateFiles(assemblyPath, "*.dll", SearchOption.AllDirectories);
             var files = dllFiles;
 
-            if(includeExeFiles)
+            if (includeExeFiles)
             {
                 var exeFiles = Directory.EnumerateFiles(assemblyPath, "*.exe", SearchOption.AllDirectories);
                 files = dllFiles.Concat(exeFiles);
@@ -74,9 +84,7 @@ namespace BaselineTypeDiscovery
         }
 
 
-
-
-        internal static IEnumerable<Assembly> FindAssemblies(Func<Assembly, bool> filter,
+        public static IEnumerable<Assembly> FindAssemblies(Func<Assembly, bool> filter,
             Action<string> onDirectoryFound = null, bool includeExeFiles=false)
         {
             if (filter == null)
@@ -171,4 +179,51 @@ namespace BaselineTypeDiscovery
             }
         }
 #endif
+
+    internal static class TopologicalSortExtensions
+    {
+        /// <summary>
+        /// Performs a topological sort on the enumeration based on dependencies
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="dependencies"></param>
+        /// <param name="throwOnCycle"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static IEnumerable<T> TopologicalSort<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> dependencies, bool throwOnCycle = true)
+        {
+            var sorted = new List<T>();
+            var visited = new HashSet<T>();
+
+            foreach (var item in source)
+            {
+                Visit(item, visited, sorted, dependencies, throwOnCycle);
+            }
+
+            return sorted;
+        }
+
+        private static void Visit<T>(T item, ISet<T> visited, ICollection<T> sorted, Func<T, IEnumerable<T>> dependencies, bool throwOnCycle)
+        {
+            if (visited.Contains(item))
+            {
+                if (throwOnCycle && !sorted.Contains(item))
+                {
+                    throw new Exception("Cyclic dependency found");
+                }
+            }
+            else
+            {
+                visited.Add(item);
+
+                foreach (var dep in dependencies(item))
+                {
+                    Visit(dep, visited, sorted, dependencies, throwOnCycle);
+                }
+
+                sorted.Add(item);
+            }
+        }
+
+    }
 }
