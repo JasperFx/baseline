@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Grab bag of generic utilities and extension methods for .Net development</Description>
-    <VersionPrefix>2.0.0</VersionPrefix>
+    <VersionPrefix>2.1.0</VersionPrefix>
     <Authors>Jeremy D. Miller;Brandon Behrens;Andrew Kharlamov</Authors>
     <TargetFrameworks>net461;netstandard2.0;netstandard2.1</TargetFrameworks>
     <AssemblyName>Baseline</AssemblyName>
