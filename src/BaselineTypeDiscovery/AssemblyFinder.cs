@@ -54,9 +54,8 @@ namespace BaselineTypeDiscovery
         public static IEnumerable<Assembly> FindAssemblies(string assemblyPath, Action<string> logFailure, bool includeExeFiles)
         {
             var assemblies = findAssemblies(assemblyPath, logFailure, includeExeFiles).OrderBy(x => x.GetName().Name).ToArray();
-            var names = assemblies.Select(x => x.GetName().Name);
 
-            Assembly[] FindDependencies(Assembly a) => assemblies.Where(x => names.Contains(x.GetName().Name)).ToArray();
+            Assembly[] FindDependencies(Assembly a) => assemblies.Where(x => a.GetReferencedAssemblies().Any(_ => _.Name == x.GetName().Name)).ToArray();
 
             return assemblies.TopologicalSort((Func<Assembly, Assembly[]>) FindDependencies, throwOnCycle:false);
         }
