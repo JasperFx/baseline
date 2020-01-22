@@ -31,7 +31,7 @@ namespace BaselineTypeDiscovery
         /// <param name="logFailure">Take an action when an assembly file could not be loaded</param>
         /// <param name="includeExeFiles">Optionally include *.exe files</param>
         /// <returns></returns>
-        public static IEnumerable<Assembly> FindAssemblies(Action<string> logFailure, bool includeExeFiles)
+        public static IEnumerable<Assembly> FindAssemblies(Action<string> logFailure, Func<Assembly, bool> filter, bool includeExeFiles)
         {
             string path;
             try {
@@ -41,7 +41,7 @@ namespace BaselineTypeDiscovery
                 path = System.IO.Directory.GetCurrentDirectory();
             }
 
-            return FindAssemblies(path, logFailure, includeExeFiles);
+            return FindAssemblies(filter, path, logFailure, includeExeFiles);
         }
 
         /// <summary>
@@ -51,9 +51,12 @@ namespace BaselineTypeDiscovery
         /// <param name="logFailure">Take an action when an assembly file could not be loaded</param>
         /// <param name="includeExeFiles">Optionally include *.exe files</param>
         /// <returns></returns>
-        public static IEnumerable<Assembly> FindAssemblies(string assemblyPath, Action<string> logFailure, bool includeExeFiles)
+        public static IEnumerable<Assembly> FindAssemblies(Func<Assembly, bool> filter, string assemblyPath, Action<string> logFailure, bool includeExeFiles)
         {
-            var assemblies = findAssemblies(assemblyPath, logFailure, includeExeFiles).OrderBy(x => x.GetName().Name).ToArray();
+            var assemblies = findAssemblies(assemblyPath, logFailure, includeExeFiles)
+                .Where(filter)
+                .OrderBy(x => x.GetName().Name)
+                .ToArray();
 
             Assembly[] FindDependencies(Assembly a) => assemblies.Where(x => a.GetReferencedAssemblies().Any(_ => _.Name == x.GetName().Name)).ToArray();
 
@@ -120,7 +123,7 @@ namespace BaselineTypeDiscovery
                 onDirectoryFound = dir => { };
             }
 
-            return FindAssemblies(file => { }, includeExeFiles: includeExeFiles).Where(filter);
+            return FindAssemblies(file => { }, filter, includeExeFiles: includeExeFiles).Where(filter);
         }
     }
 		
