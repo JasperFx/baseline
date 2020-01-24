@@ -58,9 +58,6 @@ namespace BaselineTypeDiscovery
                 .OrderBy(x => x.GetName().Name)
                 .ToArray();
 
-            var deps = assemblies[2].GetReferencedAssemblies();
-            var widget3Deps = assemblies.Where(x => assemblies[2].GetReferencedAssemblies().Any(_ => _.Name == x.GetName().Name)).ToArray();
-
             Assembly[] FindDependencies(Assembly a) => assemblies.Where(x => a.GetReferencedAssemblies().Any(_ => _.Name == x.GetName().Name)).ToArray();
 
             return assemblies.TopologicalSort((Func<Assembly, Assembly[]>) FindDependencies, throwOnCycle:false);
@@ -244,7 +241,7 @@ namespace BaselineTypeDiscovery
             else
             {
                 visited.Add(item);
-                var s = dependencies(item);
+
                 foreach (var dep in dependencies(item))
                 {
                     Visit(dep, visited, sorted, dependencies, throwOnCycle);
