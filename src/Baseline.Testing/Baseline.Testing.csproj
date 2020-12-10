@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461;netcoreapp2.0;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>net461;netcoreapp2.0;netcoreapp3.0;net5.0</TargetFrameworks>
     <AssemblyName>Baseline.Testing</AssemblyName>
     <PackageId>Baseline.Testing</PackageId>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>

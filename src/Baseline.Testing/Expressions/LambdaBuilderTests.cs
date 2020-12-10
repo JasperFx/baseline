@@ -74,12 +74,6 @@ namespace Baseline.Testing.Expressions
 
 
         [Fact]
-        public void can_get_the_Enum_GetName_method()
-        {
-            typeof(Enum).GetMethod(nameof(Enum.GetName), BindingFlags.Static | BindingFlags.Public).ShouldNotBeNull();
-        }
-
-        [Fact]
         public void can_set_a_private_id()
         {
             var member = ReflectionHelper.GetProperty<UserWithPrivateId>(x => x.Id);
