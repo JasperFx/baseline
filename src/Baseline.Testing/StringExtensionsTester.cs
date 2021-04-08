@@ -254,6 +254,14 @@ e
         {
             "my file".FileEscape().ShouldBe("\"my file\"");
         }
+
+        [Fact]
+        public void replace_first()
+        {
+            var original = "what the ? is ?";
+            original.ReplaceFirst("?", "heck")
+                .ShouldBe("what the heck is ?");
+        }
     }
 
     public enum EnvTarget
