@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Baseline.Testing
 {
-    public class StringExtensionsFacter
+    public class StringExtensionsTester
     {
 
         [Fact]
@@ -261,6 +261,24 @@ e
             var original = "what the ? is ?";
             original.ReplaceFirst("?", "heck")
                 .ShouldBe("what the heck is ?");
+        }
+
+        [Theory]
+        [InlineData("Where are the cups?", "cups", true)]
+        [InlineData("Where are the cups?", "Cups", true)]
+        [InlineData("Where are the cups?", "glasses", false)]
+        public void contains_ignore_case(string source, string value, bool expected)
+        {
+            source.ContainsIgnoreCase(value).ShouldBe(expected);
+        }
+
+        [Theory]
+        [InlineData("FooBar", "fooBar")]
+        [InlineData("Foo", "foo")]
+        [InlineData("foo", "foo")]
+        public void ToCamelCase(string original, string transformed)
+        {
+            original.ToCamelCase().ShouldBe(transformed);
         }
     }
 

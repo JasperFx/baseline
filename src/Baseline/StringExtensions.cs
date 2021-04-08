@@ -275,6 +275,34 @@ namespace Baseline
         {
             return SplitCamelCase(str);
         }
+        
+        public static string ToCamelCase(this string s)
+        {
+            if (string.IsNullOrEmpty(s) || !char.IsUpper(s[0]))
+            {
+                return s;
+            }
+
+            char[] chars = s.ToCharArray();
+
+            for (int i = 0; i < chars.Length; i++)
+            {
+                if (i == 1 && !char.IsUpper(chars[i]))
+                {
+                    break;
+                }
+
+                bool hasNext = (i + 1 < chars.Length);
+                if (i > 0 && hasNext && !char.IsUpper(chars[i + 1]))
+                {
+                    break;
+                }
+
+                chars[i] = char.ToLowerInvariant(chars[i]);
+            }
+
+            return new string(chars);
+        }
 
         public static TEnum ToEnum<TEnum>(this string text) where TEnum : struct
         {
@@ -310,6 +338,29 @@ namespace Baseline
             }
 
             return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
+        }
+        
+        /// <summary>
+        /// string.Contains() with finer grained case sensitivity settings
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="value"></param>
+        /// <param name="comparison"></param>
+        /// <returns></returns>
+        public static bool Contains(this string source, string value, StringComparison comparison)
+        {
+            return source.IndexOf(value, comparison) >= 0;
+        }
+
+        /// <summary>
+        /// string.Contains() with OrdinalIgnoreCase semantics
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool ContainsIgnoreCase(this string source, string value)
+        {
+            return source.Contains(value, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

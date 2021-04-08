@@ -22,5 +22,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ImTools" Version="3.0.0" />
+  </ItemGroup>
+
 
 </Project>
