@@ -47,5 +47,36 @@ namespace Baseline.Testing.Reflection
             Accessor accessor = _expression.ToAccessor();
             accessor.IsInteger().ShouldBeTrue();
         }
+
+        [Theory]
+        [InlineData(typeof(SimpleClass), true)]
+        [InlineData(typeof(Simple2Class), true)]
+        [InlineData(typeof(SimpleClass3), false)]
+        public void has_default_constructor(Type target, bool hasCtor)
+        {
+            target.HasDefaultConstructor().ShouldBe(hasCtor);
+        }
+        
+        public class SimpleClass{}
+
+        public class Simple2Class
+        {
+            public Simple2Class(string name)
+            {
+                
+                
+            }
+
+            public Simple2Class()
+            {
+            }
+        }
+
+        public class SimpleClass3
+        {
+            public SimpleClass3(string name)
+            {
+            }
+        }
     }
 }

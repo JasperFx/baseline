@@ -236,5 +236,15 @@ namespace Baseline.Reflection
 
 
 #endif
+        
+        /// <summary>
+        /// Does a .Net type have a default, no arg constructor
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static bool HasDefaultConstructor(this Type t)
+        {
+            return t.IsValueType || t.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) != null;
+        }
     }
 }
