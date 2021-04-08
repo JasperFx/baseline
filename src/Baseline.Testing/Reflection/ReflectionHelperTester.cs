@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Baseline.Reflection;
 using Shouldly;
 using Xunit;
@@ -28,6 +29,14 @@ namespace Baseline.Testing.Reflection
 
         private PropertyChain _chain;
         private Expression<Func<Target, ChildTarget>> _expression;
+
+        [Theory]
+        [InlineData(typeof(Target), "Target")]
+        [InlineData(typeof(Dictionary<Target, ChildTarget>), "Dictionary<Target,ChildTarget>")]
+        public void GetPrettyName(Type type, string expected)
+        {
+            type.GetPrettyName().ShouldBe(expected);
+        }
 
         public class Target
         {

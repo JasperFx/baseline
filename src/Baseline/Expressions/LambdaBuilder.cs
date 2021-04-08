@@ -85,15 +85,4 @@ namespace Baseline.Expressions
 
     }
 
-    public class FindMembers : ExpressionVisitor
-    {
-        public readonly IList<MemberInfo> Members = new List<MemberInfo>();
-
-        protected override Expression VisitMember(MemberExpression node)
-        {
-            Members.Insert(0, node.Member);
-
-            return base.VisitMember(node);
-        }
-    }
 }

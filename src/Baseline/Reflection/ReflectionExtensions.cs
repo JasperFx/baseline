@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 
 namespace Baseline.Reflection
 {
@@ -245,6 +246,42 @@ namespace Baseline.Reflection
         public static bool HasDefaultConstructor(this Type t)
         {
             return t.IsValueType || t.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) != null;
+        }
+        
+        // http://stackoverflow.com/a/15273117/426840
+        /// <summary>
+        /// Is the object an anonymous type that is not within a .Net
+        /// namespace. See http://stackoverflow.com/a/15273117/426840
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        public static bool IsAnonymousType(this object instance)
+        {
+            if (instance == null)
+                return false;
+
+            return instance.GetType().Namespace == null;
+        }
+        
+        /// <summary>
+        /// Get a user readable, "pretty" type name for a given type. Corrects for
+        /// generics and inner classes
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static string GetPrettyName(this Type t)
+        {
+            if (!t.GetTypeInfo().IsGenericType)
+                return t.Name;
+
+            var sb = new StringBuilder();
+
+            sb.Append(t.Name.Substring(0, t.Name.LastIndexOf("`", StringComparison.Ordinal)));
+            sb.Append(t.GetGenericArguments().Aggregate("<",
+                (aggregate, type) => aggregate + (aggregate == "<" ? "" : ",") + GetPrettyName(type)));
+            sb.Append(">");
+
+            return sb.ToString();
         }
     }
 }

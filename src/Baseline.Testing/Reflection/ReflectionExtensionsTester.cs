@@ -57,6 +57,8 @@ namespace Baseline.Testing.Reflection
             target.HasDefaultConstructor().ShouldBe(hasCtor);
         }
         
+        
+        
         public class SimpleClass{}
 
         public class Simple2Class
@@ -77,6 +79,17 @@ namespace Baseline.Testing.Reflection
             public SimpleClass3(string name)
             {
             }
+        }
+
+        [Fact]
+        public void is_anonymous_type()
+        {
+            var o = new {Name = "Miller"};
+            o.IsAnonymousType().ShouldBeTrue();
+            
+            "who?".IsAnonymousType().ShouldBeFalse();
+            string data = null;
+            data.IsAnonymousType().ShouldBeFalse();
         }
     }
 }
