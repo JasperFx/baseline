@@ -1597,77 +1597,114 @@ namespace Baseline.ImTools
         public static IList<T> ToListOrSelf<T>(this IEnumerable<T> source) =>
             source == null ? Empty<T>() : source as IList<T> ?? source.ToList();
 
-        /// <summary>
-        /// Array copy
-        /// </summary>
+        /// <summary>Array copy</summary>
         public static T[] Copy<T>(this T[] items)
         {
-            if (items == null)
-                return null;
-            var copy = new T[items.Length];
-            for (var i = 0; i < copy.Length; i++)
-                copy[i] = items[i];
+            if (items == null || items.Length == 0)
+                return items;
+            var count = items.Length;
+            var copy = new T[count];
+            if (count < 6)
+                for (var i = 0; i < count; ++i)
+                    copy[i] = items[i];
+            else
+                Array.Copy(items, copy, count);
             return copy;
         }
 
-        /// <summary>Returns new array consisting from all items from source array then all items from added array.
-        /// If source is null or empty, then added array will be returned.
-        /// If added is null or empty, then source will be returned.</summary>
-        /// <typeparam name="T">Array item type.</typeparam>
-        /// <param name="source">Array with leading items.</param>
-        /// <param name="added">Array with following items.</param>
-        /// <returns>New array with items of source and added arrays.</returns>
+        /// <summary>Returns the new array consisting from all items from source array then the all items from added array.
+        /// If source is null or empty then the added array will be returned. If added is null or empty then the source will be returned.</summary>
         public static T[] Append<T>(this T[] source, params T[] added)
         {
             if (added == null || added.Length == 0)
                 return source;
             if (source == null || source.Length == 0)
                 return added;
-
-            var result = new T[source.Length + added.Length];
-            Array.Copy(source, 0, result, 0, source.Length);
-            if (added.Length == 1)
-                result[source.Length] = added[0];
+            var sourceCount = source.Length;
+            var addedCount  = added.Length;
+            var result = new T[sourceCount + addedCount];
+            if (sourceCount < 6)
+                for (var i = 0; i < sourceCount; ++i)
+                    result[i] = source[i];
             else
-                Array.Copy(added, 0, result, source.Length, added.Length);
+                Array.Copy(source, 0, result, 0, sourceCount);
+            if (addedCount < 6)
+                for (var i = 0; i < addedCount; ++i)
+                    result[sourceCount + i] = added[i];
+            else
+                Array.Copy(added, 0, result, sourceCount, addedCount);
             return result;
         }
 
-        /// <summary>Performant concat of enumerables in case of arrays.
-        /// But performance will degrade if you use Concat().Where().</summary>
-        /// <typeparam name="T">Type of item.</typeparam>
-        /// <param name="source">goes first.</param>
-        /// <param name="other">appended to source.</param>
-        /// <returns>empty array or concat of source and other.</returns>
+        /// <summary>Performant concat of enumerables in case of arrays. But performance will degrade if you use Concat().Where().</summary>
         public static T[] Append<T>(this IEnumerable<T> source, IEnumerable<T> other) =>
             source.ToArrayOrSelf().Append(other.ToArrayOrSelf());
 
         /// <summary>Returns new array with <paramref name="value"/> appended, 
         /// or <paramref name="value"/> at <paramref name="index"/>, if specified.
         /// If source array could be null or empty, then single value item array will be created despite any index.</summary>
-        /// <typeparam name="T">Array item type.</typeparam>
-        /// <param name="source">Array to append value to.</param>
-        /// <param name="value"> value to append.</param>
-        /// <param name="index">(optional) Index of value to update.</param>
-        /// <returns>New array with appended or updated value.</returns>
         public static T[] AppendOrUpdate<T>(this T[] source, T value, int index = -1)
         {
             if (source == null || source.Length == 0)
                 return new[] { value };
-            var sourceLength = source.Length;
-            index = index < 0 ? sourceLength : index;
-            var result = new T[index < sourceLength ? sourceLength : sourceLength + 1];
-            Array.Copy(source, result, sourceLength);
+            var sourceCount = source.Length;
+            index = index < 0 ? sourceCount : index;
+            var result = new T[index < sourceCount ? sourceCount : sourceCount + 1];
+            Array.Copy(source, result, sourceCount);
             result[index] = value;
+            return result;
+        }
+
+        /// <summary>Returns the new array consisting from all items from source array then the all items from added array.
+        /// Assumes that both arrays are non-empty to avoid the checks.</summary>
+        public static T[] AppendNonEmpty<T>(this T[] source, params T[] added)
+        {
+            var sourceCount = source.Length;
+            var addedCount  = added.Length;
+            var result = new T[sourceCount + addedCount];
+            if (sourceCount < 6)
+                for (var i = 0; i < sourceCount; ++i)
+                    result[i] = source[i];
+            else
+                Array.Copy(source, 0, result, 0, sourceCount);
+            if (addedCount < 6)
+                for (var i = 0; i < addedCount; ++i)
+                    result[sourceCount + i] = added[i];
+            else
+                Array.Copy(added, 0, result, sourceCount, addedCount);
+            return result;
+        }
+
+        /// <summary>Returns new array with <paramref name="value"/> appended. Assumes that `source` is not empty to avoid the checks.</summary>
+        public static T[] AppendToNonEmpty<T>(this T[] source, T value)
+        {
+            var count = source.Length;
+            var result = new T[count + 1];
+            if (count < 6)
+                for (var i = 0; i < count; ++i)
+                    result[i] = source[i];
+            else
+                Array.Copy(source, 0, result, 0, count);
+            result[count] = value;
+            return result;
+        }
+
+        /// <summary>Returns new array with <paramref name="value"/> prepended. Assumes that `source` is not empty to avoid the checks.</summary>
+        public static T[] PrependToNonEmpty<T>(this T[] source, T value)
+        {
+            var count = source.Length;
+            var result = new T[count + 1];
+            if (count < 6)
+                for (var i = 0; i < count; ++i)
+                    result[i + 1] = source[i];
+            else
+                Array.Copy(source, 0, result, 1, count);
+            result[0] = value;
             return result;
         }
 
         /// <summary>Calls predicate on each item in <paramref name="source"/> array until predicate returns true,
         /// then method will return this item index, or if predicate returns false for each item, method will return -1.</summary>
-        /// <typeparam name="T">Type of array items.</typeparam>
-        /// <param name="source">Source array: if null or empty, then method will return -1.</param>
-        /// <param name="predicate">Delegate to evaluate on each array item until delegate returns true.</param>
-        /// <returns>Index of item for which predicate returns true, or -1 otherwise.</returns>
         public static int IndexOf<T>(this T[] source, Func<T, bool> predicate)
         {
             if (source != null && source.Length != 0)
@@ -1677,7 +1714,7 @@ namespace Baseline.ImTools
             return -1;
         }
 
-        /// Minimizes the allocations for closure in predicate lambda with the provided <paramref name="state"/>
+        /// <summary>Minimizes the allocations for closure in predicate lambda with the provided <paramref name="state"/></summary>
         public static int IndexOf<T, S>(this T[] source, S state, Func<S, T, bool> predicate)
         {
             if (source != null && source.Length != 0)
@@ -1688,10 +1725,6 @@ namespace Baseline.ImTools
         }
 
         /// <summary>Looks up for item in source array equal to provided value, and returns its index, or -1 if not found.</summary>
-        /// <typeparam name="T">Type of array items.</typeparam>
-        /// <param name="source">Source array: if null or empty, then method will return -1.</param>
-        /// <param name="value"> value to look up.</param>
-        /// <returns>Index of item equal to value, or -1 item is not found.</returns>
         public static int IndexOf<T>(this T[] source, T value)
         {
             if (source != null && source.Length != 0)
@@ -1717,9 +1750,6 @@ namespace Baseline.ImTools
 
         /// <summary>Produces new array without item at specified <paramref name="index"/>. 
         /// Will return <paramref name="source"/> array if index is out of bounds, or source is null/empty.</summary>
-        /// <typeparam name="T">Type of array item.</typeparam>
-        /// <param name="source">Input array.</param> <param name="index">Index if item to remove.</param>
-        /// <returns>New array with removed item at index, or input source array if index is not in array.</returns>
         public static T[] RemoveAt<T>(this T[] source, int index)
         {
             if (source == null || source.Length == 0 || index < 0 || index >= source.Length)
@@ -1735,17 +1765,10 @@ namespace Baseline.ImTools
         }
 
         /// <summary>Looks for item in array using equality comparison, and returns new array with found item remove, or original array if not item found.</summary>
-        /// <typeparam name="T">Type of array item.</typeparam>
-        /// <param name="source">Input array.</param> <param name="value"> value to find and remove.</param>
-        /// <returns>New array with value removed or original array if value is not found.</returns>
         public static T[] Remove<T>(this T[] source, T value) =>
             source.RemoveAt(source.IndexOf(value));
 
         /// <summary>Returns first item matching the <paramref name="predicate"/>, or default item value.</summary>
-        /// <typeparam name="T">item type</typeparam>
-        /// <param name="source">items collection to search</param>
-        /// <param name="predicate">condition to evaluate for each item.</param>
-        /// <returns>First item matching condition or default value.</returns>
         public static T FindFirst<T>(this T[] source, Func<T, bool> predicate)
         {
             if (source != null && source.Length != 0)
@@ -1759,7 +1782,7 @@ namespace Baseline.ImTools
             return default(T);
         }
 
-        /// Version of FindFirst with the fixed state used by predicate to prevent allocations by predicate lambda closure
+        /// <summary>Version of FindFirst with the fixed state used by predicate to prevent allocations by predicate lambda closure</summary>
         public static T FindFirst<T, S>(this T[] source, S state, Func<S, T, bool> predicate)
         {
             if (source != null && source.Length != 0)
@@ -1774,10 +1797,6 @@ namespace Baseline.ImTools
         }
 
         /// <summary>Returns first item matching the <paramref name="predicate"/>, or default item value.</summary>
-        /// <typeparam name="T">item type</typeparam>
-        /// <param name="source">items collection to search</param>
-        /// <param name="predicate">condition to evaluate for each item.</param>
-        /// <returns>First item matching condition or default value.</returns>
         public static T FindFirst<T>(this IEnumerable<T> source, Func<T, bool> predicate) =>
             source is T[] sourceArr ? sourceArr.FindFirst(predicate) : source.FirstOrDefault(predicate);
 
@@ -1868,7 +1887,7 @@ namespace Baseline.ImTools
             return appendedResults;
         }
 
-        private static R[] AppendTo<T, S, R>(T[] source, S state, int sourcePos, int count, Func<S, T, R> map, R[] results = null)
+        private static R[] AppendTo<S, T, R>(T[] source, S state, int sourcePos, int count, Func<S, T, R> map, R[] results = null)
         {
             if (results == null || results.Length == 0)
             {
@@ -1899,12 +1918,39 @@ namespace Baseline.ImTools
             return appendedResults;
         }
 
+        private static R[] AppendTo<A, B, T, R>(T[] source, A a, B b, int sourcePos, int count, Func<A, B, T, R> map, R[] results = null)
+        {
+            if (results == null || results.Length == 0)
+            {
+                var newResults = new R[count];
+                if (count == 1)
+                    newResults[0] = map(a, b, source[sourcePos]);
+                else
+                    for (int i = 0, j = sourcePos; i < count; ++i, ++j)
+                        newResults[i] = map(a, b, source[j]);
+                return newResults;
+            }
+
+            var oldResultsCount = results.Length;
+            var appendedResults = new R[oldResultsCount + count];
+            if (oldResultsCount == 1)
+                appendedResults[0] = results[0];
+            else
+                Array.Copy(results, 0, appendedResults, 0, oldResultsCount);
+
+            if (count == 1)
+                appendedResults[oldResultsCount] = map(a, b, source[sourcePos]);
+            else
+            {
+                for (int i = oldResultsCount, j = sourcePos; i < appendedResults.Length; ++i, ++j)
+                    appendedResults[i] = map(a, b, source[j]);
+            }
+
+            return appendedResults;
+        }
+
         /// <summary>Where method similar to Enumerable.Where but more performant and non necessary allocating.
         /// It returns source array and does Not create new one if all items match the condition.</summary>
-        /// <typeparam name="T">Type of source items.</typeparam>
-        /// <param name="source">If null, the null will be returned.</param>
-        /// <param name="condition">Condition to keep items.</param>
-        /// <returns>New array if some items are filter out. Empty array if all items are filtered out. Original array otherwise.</returns>
         public static T[] Match<T>(this T[] source, Func<T, bool> condition)
         {
             if (source == null || source.Length == 0)
@@ -1915,12 +1961,9 @@ namespace Baseline.ImTools
 
             if (source.Length == 2)
             {
-                var condition0 = condition(source[0]);
-                var condition1 = condition(source[1]);
-                return condition0 && condition1 ? new[] { source[0], source[1] }
-                    : condition0 ? new[] { source[0] }
-                    : condition1 ? new[] { source[1] }
-                    : Empty<T>();
+                var c0 = condition(source[0]);
+                var c1 = condition(source[1]);
+                return c0 && c1 ? source : c0 ? new[] { source[0] } : c1 ? new[] { source[1] } : Empty<T>();
             }
 
             var matchStart = 0;
@@ -1928,7 +1971,7 @@ namespace Baseline.ImTools
             var matchFound = false;
             var i = 0;
             for (; i < source.Length; ++i)
-                if (!(matchFound = condition(source[i])))
+                if (!(matchFound = condition(source[i]))) // todo: @unclear check what will happen if the `matchFound` is set back to false
                 {
                     // for accumulated matched items
                     if (i != 0 && i > matchStart)
@@ -1943,8 +1986,9 @@ namespace Baseline.ImTools
             return matches ?? (matchStart != 0 ? Empty<T>() : source);
         }
 
-        /// Match with the additional state to use in <paramref name="condition"/> to minimize the allocations in <paramref name="condition"/> lambda closure 
-        public static T[] Match<T, S>(this T[] source, S state, Func<S, T, bool> condition)
+        /// <summary>Match with the additional state to use in <paramref name="condition"/> to minimize the allocations 
+        /// in <paramref name="condition"/> lambda closure</summary> 
+        public static T[] Match<S, T>(this T[] source, S state, Func<S, T, bool> condition)
         {
             if (source == null || source.Length == 0)
                 return source;
@@ -1954,12 +1998,9 @@ namespace Baseline.ImTools
 
             if (source.Length == 2)
             {
-                var condition0 = condition(state, source[0]);
-                var condition1 = condition(state, source[1]);
-                return condition0 && condition1 ? new[] { source[0], source[1] }
-                    : condition0 ? new[] { source[0] }
-                    : condition1 ? new[] { source[1] }
-                    : Empty<T>();
+                var c0 = condition(state, source[0]);
+                var c1 = condition(state, source[1]);
+                return c0 && c1 ? source : c0 ? new[] { source[0] } : c1 ? new[] { source[1] } : Empty<T>();
             }
 
             var matchStart = 0;
@@ -1982,12 +2023,45 @@ namespace Baseline.ImTools
             return matches ?? (matchStart != 0 ? Empty<T>() : source);
         }
 
+        /// <summary>Match with the additional state to use in <paramref name="condition"/> to minimize the allocations 
+        /// in <paramref name="condition"/> lambda closure</summary> 
+        public static T[] Match<A, B, T>(this T[] source, A a, B b, Func<A, B, T, bool> condition)
+        {
+            if (source == null || source.Length == 0)
+                return source;
+
+            if (source.Length == 1)
+                return condition(a, b, source[0]) ? source : Empty<T>();
+
+            if (source.Length == 2)
+            {
+                var c0 = condition(a, b, source[0]);
+                var c1 = condition(a, b, source[1]);
+                return c0 && c1 ? source : c0 ? new[] { source[0] } : c1 ? new[] { source[1] } : Empty<T>();
+            }
+
+            var matchStart = 0;
+            T[] matches = null;
+            var matchFound = false;
+            var i = 0;
+            for (; i < source.Length; ++i)
+                if (!(matchFound = condition(a, b, source[i])))
+                {
+                    // for accumulated matched items
+                    if (i != 0 && i > matchStart)
+                        matches = AppendTo(source, matchStart, i - matchStart, matches);
+                    matchStart = i + 1; // guess the next match start will be after the non-matched item
+                }
+
+            // when last match was found but not all items are matched (hence matchStart != 0)
+            if (matchFound && matchStart != 0)
+                return AppendTo(source, matchStart, i - matchStart, matches);
+
+            return matches ?? (matchStart != 0 ? Empty<T>() : source);
+        }
+
         /// <summary>Where method similar to Enumerable.Where but more performant and non necessary allocating.
         /// It returns source array and does Not create new one if all items match the condition.</summary>
-        /// <typeparam name="T">Type of source items.</typeparam> <typeparam name="R">Type of result items.</typeparam>
-        /// <param name="source">If null, the null will be returned.</param>
-        /// <param name="condition">Condition to keep items.</param> <param name="map">Converter from source to result item.</param>
-        /// <returns>New array of result items.</returns>
         public static R[] Match<T, R>(this T[] source, Func<T, bool> condition, Func<T, R> map)
         {
             if (source == null)
@@ -2004,12 +2078,9 @@ namespace Baseline.ImTools
 
             if (source.Length == 2)
             {
-                var condition0 = condition(source[0]);
-                var condition1 = condition(source[1]);
-                return condition0 && condition1 ? new[] { map(source[0]), map(source[1]) }
-                    : condition0 ? new[] { map(source[0]) }
-                    : condition1 ? new[] { map(source[1]) }
-                    : Empty<R>();
+                var c0 = condition(source[0]);
+                var c1 = condition(source[1]);
+                return c0 && c1 ? new[] { map(source[0]), map(source[1]) } : c0 ? new[] { map(source[0]) } : c1 ? new[] { map(source[1]) } : Empty<R>();
             }
 
             var matchStart = 0;
@@ -2033,12 +2104,12 @@ namespace Baseline.ImTools
             return matches ?? (matchStart == 0 ? AppendTo(source, 0, source.Length, map) : Empty<R>());
         }
 
-        /// Match with the additional state to use in <paramref name="condition"/> and <paramref name="map"/> to minimize the allocations in <paramref name="condition"/> lambda closure 
-        public static R[] Match<T, S, R>(this T[] source, S state, Func<S, T, bool> condition, Func<S, T, R> map)
+        /// <summary>Match with the additional state to use in <paramref name="condition"/> and <paramref name="map"/> 
+        /// to minimize the allocations in <paramref name="condition"/> lambda closure </summary>
+        public static R[] Match<S, T, R>(this T[] source, S state, Func<S, T, bool> condition, Func<S, T, R> map)
         {
             if (source == null)
                 return null;
-
             if (source.Length == 0)
                 return Empty<R>();
 
@@ -2077,6 +2148,52 @@ namespace Baseline.ImTools
                 return AppendTo(source, state, matchStart, i - matchStart, map, matches);
 
             return matches ?? (matchStart == 0 ? AppendTo(source, state, 0, source.Length, map) : Empty<R>());
+        }
+
+        /// <summary>Match with the additional state to use in <paramref name="condition"/> and <paramref name="map"/> 
+        /// to minimize the allocations in <paramref name="condition"/> lambda closure </summary>
+        public static R[] Match<A, B, T, R>(this T[] source, A a, B b, Func<A, B, T, bool> condition, Func<A, B, T, R> map)
+        {
+            if (source == null)
+                return null;
+            if (source.Length == 0)
+                return Empty<R>();
+
+            if (source.Length == 1)
+            {
+                var item = source[0];
+                return condition(a, b, item) ? new[] { map(a, b, item) } : Empty<R>();
+            }
+
+            if (source.Length == 2)
+            {
+                var condition0 = condition(a, b, source[0]);
+                var condition1 = condition(a, b, source[1]);
+                return condition0 && condition1 ? new[] { map(a, b, source[0]), map(a, b, source[1]) }
+                    : condition0 ? new[] { map(a, b, source[0]) }
+                    : condition1 ? new[] { map(a, b, source[1]) }
+                    : Empty<R>();
+            }
+
+            var matchStart = 0;
+            R[] matches = null;
+            var matchFound = false;
+
+            var i = 0;
+            for (; i < source.Length; ++i)
+                if (!(matchFound = condition(a, b, source[i])))
+                {
+                    // for accumulated matched items
+                    if (i != 0 && i > matchStart)
+                        matches = AppendTo(source, a, b, matchStart, i - matchStart, map, matches);
+                    matchStart = i + 1; // guess the next match start will be after the non-matched item
+                }
+
+            // when last match was found but not all items are matched (hence matchStart != 0)
+            if (matchFound && matchStart != 0)
+                return AppendTo(source, a, b, matchStart, i - matchStart, map, matches);
+
+            return matches ?? (matchStart == 0 ? AppendTo(source, a, b, 0, source.Length, map) : Empty<R>());
         }
 
         /// <summary>Maps all items from source to result array.</summary>
@@ -2126,8 +2243,7 @@ namespace Baseline.ImTools
             return results;
         }
 
-        /// <summary>Maps all items from source to result collection. 
-        /// If possible uses fast array Map otherwise Enumerable.Select.</summary>
+        /// <summary>Maps all items from source to result collection. If possible uses fast array Map otherwise Enumerable.Select.</summary>
         /// <typeparam name="T">Source item type</typeparam> <typeparam name="R">Result item type</typeparam>
         /// <param name="source">Source items</param> <param name="map">Function to convert item from source to result.</param>
         /// <returns>Converted items</returns>
@@ -2924,7 +3040,7 @@ namespace Baseline.ImTools
     }
 
     /// <summary>The base and the holder class for the map tree leafs and branches, also defines the Empty tree.
-    /// The map implementation is based on the "modified" 2-3-4 tree.</summary>
+    /// The map implementation is based on the "modified" 2-3 tree.</summary>
     public class ImHashMap<K, V>
     {
         /// <summary>Hide the base constructor to prevent the multiple Empty trees creation</summary>
@@ -4031,7 +4147,7 @@ namespace Baseline.ImTools
     }
 
     /// <summary>The base and the holder class for the map tree leafs and branches, also defines the Empty tree.
-    /// The map implementation is based on the "modified" 2-3-4 tree.</summary>
+    /// The map implementation is based on the "modified" 2-3 tree.</summary>
     public class ImMap<V>
     {
         /// <summary>Hide the base constructor to prevent the multiple Empty trees creation</summary>
@@ -5117,11 +5233,11 @@ namespace Baseline.ImTools
     {
         /// <summary>Creates the entry to help with inference</summary>
         [MethodImpl((MethodImplOptions)256)]
-        public static ImHashMap<K, V> Entry<K, V>(K key, V value) => new ImHashMapEntry<K, V>(key.GetHashCode(), key, value);
+        public static ImHashMapEntry<K, V> Entry<K, V>(K key, V value) => new ImHashMapEntry<K, V>(key.GetHashCode(), key, value);
 
         /// <summary>Creates the entry to help with inference</summary>
         [MethodImpl((MethodImplOptions)256)]
-        public static ImHashMap<K, V> Entry<K, V>(int hash, K key, V value) => new ImHashMapEntry<K, V>(hash, key, value);
+        public static ImHashMapEntry<K, V> Entry<K, V>(int hash, K key, V value) => new ImHashMapEntry<K, V>(hash, key, value);
 
         private sealed class GoRightInBranch3<K, V> 
         {
@@ -5654,6 +5770,279 @@ namespace Baseline.ImTools
             return state;
         }
 
+        /// <summary>Struct handler to allow inlining of the Invoke implementation. Important: will be inlined only with the non-generic implementation</summary>
+        public interface IHandler<K, V, S>
+        {
+            /// <summary>Handler code</summary>
+            void Invoke(ImHashMapEntry<K, V> entry, int i, S state);
+        }
+
+        /// <summary>
+        /// Depth-first in-order of hash traversal as described in http://en.wikipedia.org/wiki/Tree_traversal.
+        /// The `parents` parameter allows to reuse the stack memory used for the traversal between multiple calls.
+        /// So you may pass the empty `parents` into the first `Enumerate` and then keep passing the same `parents` into the subsequent calls</summary>
+        public static S ForEach<K, V, S, THandler>(this ImHashMap<K, V> map, S state, THandler handler, MapParentStack parents = null)
+            where THandler : struct, IHandler<K, V, S>
+        {
+            if (map == ImHashMap<K, V>.Empty)
+                return state;
+            var i = 0;
+            if (map is ImHashMap<K, V>.Entry e)
+            {
+                if (e is ImHashMapEntry<K, V> kv) handler.Invoke(kv, 0, state);
+                else foreach (var c in ((HashConflictingEntry<K, V>)e).Conflicts) handler.Invoke(c, i++, state);
+                return state;
+            }
+
+            var count = 0;
+            GoRightInBranch3<K, V> br3Wrapper = null;
+            while (true)
+            {
+                if (map is ImHashMap<K, V>.Branch2 b2)
+                {
+                    if (parents == null)
+                        parents = new MapParentStack();
+                    parents.Push(map, count++);
+                    map = b2.Left;
+                    continue;
+                }
+                if (map is ImHashMap<K, V>.Branch3 b3)
+                {
+                    if (parents == null)
+                        parents = new MapParentStack();
+                    parents.Push(map, count++);
+                    map = b3.Left;
+                    continue;
+                }
+
+                if (map is ImHashMap<K, V>.Entry l1)
+                {
+                    if (l1 is ImHashMapEntry<K, V> v0) handler.Invoke(v0, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)l1).Conflicts) handler.Invoke(c, i++, state);
+                }
+                else if (map is ImHashMap<K, V>.Leaf2 l2)
+                {
+                    if (l2.Entry0 is ImHashMapEntry<K, V> v0) handler.Invoke(v0, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)l2.Entry0).Conflicts) handler.Invoke(c, i++, state);
+                    if (l2.Entry1 is ImHashMapEntry<K, V> v1) handler.Invoke(v1, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)l2.Entry1).Conflicts) handler.Invoke(c, i++, state);
+                }
+                else if (map is ImHashMap<K, V>.Leaf2Plus1 l21)
+                {
+                    var p  = l21.Plus;
+                    var ph = p.Hash;
+                    var l  = l21.L;
+                    ImHashMap<K, V>.Entry e0 = l.Entry0, e1 = l.Entry1, swap = null;
+                    if (ph < e1.Hash)
+                    {
+                        swap = e1; e1 = p; p = swap;
+                        if (ph < e0.Hash)
+                        {
+                            swap = e0; e0 = e1; e1 = swap;
+                        }
+                    }
+
+                    if (e0 is ImHashMapEntry<K, V> v0) handler.Invoke(v0, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e0).Conflicts) handler.Invoke(c, i++, state);
+                    if (e1 is ImHashMapEntry<K, V> v1) handler.Invoke(v1, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e1).Conflicts) handler.Invoke(c, i++, state);
+                    if (p  is ImHashMapEntry<K, V> v2) handler.Invoke(v2, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)p ).Conflicts) handler.Invoke(c, i++, state);
+                }
+                else if (map is ImHashMap<K, V>.Leaf2Plus1Plus1 l211)
+                {
+                    var p  = l211.Plus;
+                    var pp = l211.L.Plus;
+                    var ph = pp.Hash;
+                    var l  = l211.L.L;
+                    ImHashMap<K, V>.Entry e0 = l.Entry0, e1 = l.Entry1, swap = null;
+                    if (ph < e1.Hash)
+                    {
+                        swap = e1; e1 = pp; pp = swap;
+                        if (ph < e0.Hash)
+                        {
+                            swap = e0; e0 = e1; e1 = swap;
+                        }
+                    }
+
+                    ph = p.Hash;
+                    if (ph < pp.Hash)
+                    {
+                        swap = pp; pp = p; p = swap;
+                        if (ph < e1.Hash)
+                        {
+                            swap = e1; e1 = pp; pp = swap;
+                            if (ph < e0.Hash)
+                            {
+                                swap = e0; e0 = e1; e1 = swap;
+                            }
+                        }
+                    }
+
+                    if (e0 is ImHashMapEntry<K, V> v0) handler.Invoke(v0, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e0).Conflicts) handler.Invoke(c, i++, state);
+                    if (e1 is ImHashMapEntry<K, V> v1) handler.Invoke(v1, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e1).Conflicts) handler.Invoke(c, i++, state);
+                    if (pp is ImHashMapEntry<K, V> v2) handler.Invoke(v2, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)pp).Conflicts) handler.Invoke(c, i++, state);
+                    if (p  is ImHashMapEntry<K, V> v3) handler.Invoke(v3, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)p).Conflicts)  handler.Invoke(c, i++, state);
+                }
+                else if (map is ImHashMap<K, V>.Leaf5 l5)
+                {
+                    if (l5.Entry0 is ImHashMapEntry<K, V> v0) handler.Invoke(v0, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)l5.Entry0).Conflicts) handler.Invoke(c, i++, state);
+                    if (l5.Entry1 is ImHashMapEntry<K, V> v1) handler.Invoke(v1, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)l5.Entry1).Conflicts) handler.Invoke(c, i++, state);
+                    if (l5.Entry2 is ImHashMapEntry<K, V> v2) handler.Invoke(v2, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)l5.Entry2).Conflicts) handler.Invoke(c, i++, state);
+                    if (l5.Entry3 is ImHashMapEntry<K, V> v3) handler.Invoke(v3, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)l5.Entry3).Conflicts) handler.Invoke(c, i++, state);
+                    if (l5.Entry4 is ImHashMapEntry<K, V> v4) handler.Invoke(v4, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)l5.Entry4).Conflicts) handler.Invoke(c, i++, state);
+                }
+                else if (map is ImHashMap<K, V>.Leaf5Plus1 l51)
+                {
+                    var p  = l51.Plus;
+                    var ph = p.Hash;
+                    var l  = l51.L;
+                    ImHashMap<K, V>.Entry e0 = l.Entry0, e1 = l.Entry1, e2 = l.Entry2, e3 = l.Entry3, e4 = l.Entry4, swap = null;
+                    if (ph < e4.Hash)
+                    {
+                        swap = e4; e4 = p; p = swap;
+                        if (ph < e3.Hash)
+                        {
+                            swap = e3; e3 = e4; e4 = swap;
+                            if (ph < e2.Hash)
+                            {
+                                swap = e2; e2 = e3; e3 = swap;
+                                if (ph < e1.Hash)
+                                {
+                                    swap = e1; e1 = e2; e2 = swap;
+                                    if (ph < e0.Hash)
+                                    {
+                                        swap = e0; e0 = e1; e1 = swap;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (e0 is ImHashMapEntry<K, V> v0) handler.Invoke(v0, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e0).Conflicts) handler.Invoke(c, i++, state);
+                    if (e1 is ImHashMapEntry<K, V> v1) handler.Invoke(v1, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e1).Conflicts) handler.Invoke(c, i++, state);
+                    if (e2 is ImHashMapEntry<K, V> v2) handler.Invoke(v2, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e2).Conflicts) handler.Invoke(c, i++, state);
+                    if (e3 is ImHashMapEntry<K, V> v3) handler.Invoke(v3, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e3).Conflicts) handler.Invoke(c, i++, state);
+                    if (e4 is ImHashMapEntry<K, V> v4) handler.Invoke(v4, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e4).Conflicts) handler.Invoke(c, i++, state);
+                    if (p  is ImHashMapEntry<K, V> v5) handler.Invoke(v5, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)p).Conflicts)  handler.Invoke(c, i++, state);
+                }
+                else if (map is ImHashMap<K, V>.Leaf5Plus1Plus1 l511)
+                {
+                    var l = l511.L.L;
+                    ImHashMap<K, V>.Entry 
+                        e0 = l.Entry0, e1 = l.Entry1, e2 = l.Entry2, e3 = l.Entry3, e4 = l.Entry4, p = l511.Plus, pp = l511.L.Plus, swap = null;
+                    var h = pp.Hash;
+                    if (h < e4.Hash)
+                    {
+                        swap = e4; e4 = pp; pp = swap;
+                        if (h < e3.Hash)
+                        {
+                            swap = e3; e3 = e4; e4 = swap;
+                            if (h < e2.Hash)
+                            {
+                                swap = e2; e2 = e3; e3 = swap;
+                                if (h < e1.Hash)
+                                {
+                                    swap = e1; e1 = e2; e2 = swap;
+                                    if (h < e0.Hash)
+                                    {
+                                        swap = e0; e0 = e1; e1 = swap;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    h = p.Hash;
+                    if (h < pp.Hash)
+                    {
+                        swap = pp; pp = p; p = swap;
+                        if (h < e4.Hash)
+                        {
+                            swap = e4; e4 = pp; pp = swap;
+                            if (h < e3.Hash)
+                            {
+                                swap = e3; e3 = e4; e4 = swap;
+                                if (h < e2.Hash)
+                                {
+                                    swap = e2; e2 = e3; e3 = swap;
+                                    if (h < e1.Hash)
+                                    {
+                                        swap = e1; e1 = e2; e2 = swap;
+                                        if (h < e0.Hash)
+                                        {
+                                            swap = e0; e0 = e1; e1 = swap;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (e0 is ImHashMapEntry<K, V> v0) handler.Invoke(v0, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e0).Conflicts) handler.Invoke(c, i++, state);
+                    if (e1 is ImHashMapEntry<K, V> v1) handler.Invoke(v1, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e1).Conflicts) handler.Invoke(c, i++, state);
+                    if (e2 is ImHashMapEntry<K, V> v2) handler.Invoke(v2, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e2).Conflicts) handler.Invoke(c, i++, state);
+                    if (e3 is ImHashMapEntry<K, V> v3) handler.Invoke(v3, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e3).Conflicts) handler.Invoke(c, i++, state);
+                    if (e4 is ImHashMapEntry<K, V> v4) handler.Invoke(v4, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)e4).Conflicts) handler.Invoke(c, i++, state);
+                    if (pp is ImHashMapEntry<K, V> v5) handler.Invoke(v5, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)pp).Conflicts) handler.Invoke(c, i++, state);
+                    if (p  is ImHashMapEntry<K, V> v6) handler.Invoke(v6, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)p).Conflicts)  handler.Invoke(c, i++, state);
+                }
+
+                if (count == 0)
+                    break; // we yield the leaf and there is nothing in stack - we are DONE!
+
+                var b = parents.Get(--count); // otherwise get the parent
+                if (b is ImHashMap<K,V>.Branch2 pb2)
+                {
+                    if (pb2.MidEntry is ImHashMapEntry<K, V> v) handler.Invoke(v, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)pb2.MidEntry).Conflicts) handler.Invoke(c, i++, state);
+                    map = pb2.Right;
+                }
+                else if (b is ImHashMap<K, V>.Branch3 pb3)
+                {
+                    if (pb3.Entry0 is ImHashMapEntry<K, V> v) handler.Invoke(v, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)pb3.Entry0).Conflicts) handler.Invoke(c, i++, state);
+                    if (br3Wrapper == null)
+                        br3Wrapper = new GoRightInBranch3<K, V>();
+                    br3Wrapper.Br3 = pb3;
+                    parents.Set(count++, br3Wrapper);
+                    br3Wrapper = null; // set to null to mark that the wrapper is in use and longer shared
+                    map = pb3.Middle;
+                }
+                else 
+                {
+                    br3Wrapper = (GoRightInBranch3<K, V>)b;
+                    if (br3Wrapper.Br3.Entry1 is ImHashMapEntry<K, V> v) handler.Invoke(v, i++, state);
+                    else foreach (var c in ((HashConflictingEntry<K, V>)br3Wrapper.Br3.Entry1).Conflicts) handler.Invoke(c, i++, state);
+                    map = br3Wrapper.Br3.Right;
+                }
+            }
+
+            return state;
+        }
+
         /// <summary>Do something for each entry.
         /// The `parents` parameter allows to reuse the stack memory used for the traversal between multiple calls.
         /// So you may pass the empty `parents` into the first `Enumerate` and then keep passing the same `parents` into the subsequent calls</summary>
@@ -5670,6 +6059,11 @@ namespace Baseline.ImTools
         public static S[] ToArray<K, V, S>(this ImHashMap<K, V> map, Func<ImHashMapEntry<K, V>, S> selector) =>
             map == ImHashMap<K, V>.Empty ? ArrayTools.Empty<S>() : 
                 map.ForEach(St.Rent(new S[map.Count()], selector), (e, i, s) => s.a[i] = s.b(e)).ResetButGetA();
+
+        /// <summary>Converts map to an array with the minimum allocations</summary>
+        public static ImHashMapEntry<K, V>[] ToArray<K, V>(this ImHashMap<K, V> map) =>
+            map == ImHashMap<K, V>.Empty ? ArrayTools.Empty<ImHashMapEntry<K, V>>() : 
+                map.ForEach(new ImHashMapEntry<K, V>[map.Count()], (e, i, a) => a[i] = e);
 
         /// <summary>Converts the map to the dictionary</summary>
         public static Dictionary<K, V> ToDictionary<K, V>(this ImHashMap<K, V> map) =>
@@ -6158,7 +6552,7 @@ namespace Baseline.ImTools
     {
         /// <summary>Creates the entry to help with inference</summary>
         [MethodImpl((MethodImplOptions)256)]
-        public static ImMap<V> Entry<V>(int hash, V value) => new ImMapEntry<V>(hash, value);
+        public static ImMapEntry<V> Entry<V>(int hash, V value) => new ImMapEntry<V>(hash, value);
 
         private sealed class GoRightInBranch3<V> 
         {
@@ -6640,6 +7034,10 @@ namespace Baseline.ImTools
             map == ImMap<V>.Empty ? ArrayTools.Empty<S>() :
                 map.ForEach(St.Rent(new S[map.Count()], selector), (e, i, s) => s.a[i] = s.b(e)).ResetButGetA();
 
+        /// <summary>Converts the map to an array with the minimum allocations</summary>
+        public static ImMapEntry<V>[] ToArray<K, V>(this ImMap<V> map) =>
+            map == ImMap<V>.Empty ? ArrayTools.Empty<ImMapEntry<V>>() : map.ForEach(new ImMapEntry<V>[map.Count()], (e, i, a) => a[i] = e);
+
         /// <summary>Converts the map to the dictionary</summary>
         public static Dictionary<int, V> ToDictionary<V>(this ImMap<V> map) =>
             map == ImMap<V>.Empty ? new Dictionary<int, V>(0) :
@@ -6812,21 +7210,20 @@ namespace Baseline.ImTools
             return p != null ? p.GetValueOrDefault(hash, key) : default(V);
         }
 
+        /// <summary>Lookup for the value by the key using the hash and checking the key with the `object.ReferenceEquals` for equality,
+        ///  returns found value or the default value if not found</summary>
+        [MethodImpl((MethodImplOptions)256)]
+        public static V GetValueOrDefaultByReferenceEquals<K, V>(this ImHashMap<K, V>[] parts, int hash, K key, int partHashMask = PARTITION_HASH_MASK) where K : class
+        {
+            var p = parts[hash & partHashMask];
+            return p != null ? p.GetValueOrDefaultByReferenceEquals(hash, key) : default(V);
+        }
+
         /// <summary>Lookup for the value by the key using its hash and checking the key with the `object.Equals` for equality, 
         /// returns the default `V` if hash, key are not found.</summary>
         [MethodImpl((MethodImplOptions)256)]
         public static V GetValueOrDefault<K, V>(this ImHashMap<K, V>[] parts, K key, int partHashMask = PARTITION_HASH_MASK) =>
             parts.GetValueOrDefault(key.GetHashCode(), key, partHashMask);
-
-        /// <summary>Lookup for the value by the key using the hash and checking the key with the `object.ReferenceEquals` for equality, 
-        /// returns the default `V` if hash, key are not found.</summary>
-        [MethodImpl((MethodImplOptions)256)]
-        public static V GetValueOrDefaultByReferenceEquals<K, V>(this ImHashMap<K, V>[] parts, int hash, K key, 
-            int partHashMask = PARTITION_HASH_MASK) where K : class
-        {
-            var p = parts[hash & partHashMask];
-            return p != null ? p.GetValueOrDefaultByReferenceEquals(hash, key) : default(V);
-        }
 
         /// <summary>Lookup for the value by the key using the hash code and checking the key with the `object.Equals` for equality,
         /// returns the `true` and the found value or the `false`</summary>
@@ -6862,14 +7259,12 @@ namespace Baseline.ImTools
         /// <summary>Lookup for the value by the key using its hash and checking the key with the `object.ReferenceEquals` for equality, 
         /// returns the default `V` if hash, key are not found.</summary>
         [MethodImpl((MethodImplOptions)256)]
-        public static V GetValueOrDefaultByReferenceEquals<K, V>(this ImHashMap<K, V>[] parts, K key, 
-            int partHashMask = PARTITION_HASH_MASK) where K : class => 
+        public static V GetValueOrDefaultByReferenceEquals<K, V>(this ImHashMap<K, V>[] parts, K key, int partHashMask = PARTITION_HASH_MASK) where K : class => 
             parts.GetValueOrDefaultByReferenceEquals(key.GetHashCode(), key, partHashMask);
 
         /// <summary>Returns the SAME partitioned maps array instance but with the NEW added or updated partion</summary>
         [MethodImpl((MethodImplOptions)256)]
-        public static void AddOrUpdate<K, V>(this ImHashMap<K, V>[] parts, int hash, K key, V value, 
-            int partHashMask = PARTITION_HASH_MASK)
+        public static void AddOrUpdate<K, V>(this ImHashMap<K, V>[] parts, int hash, K key, V value, int partHashMask = PARTITION_HASH_MASK)
         {
             ref var part = ref parts[hash & partHashMask];
             var p = part;
@@ -6879,8 +7274,7 @@ namespace Baseline.ImTools
 
         /// <summary>Returns the SAME partitioned maps array instance but with the NEW added or updated partion</summary>
         [MethodImpl((MethodImplOptions) 256)]
-        public static void AddOrUpdate<K, V>(this ImHashMap<K, V>[] parts, K key, V value, 
-            int partHashMask = PARTITION_HASH_MASK) =>
+        public static void AddOrUpdate<K, V>(this ImHashMap<K, V>[] parts, K key, V value, int partHashMask = PARTITION_HASH_MASK) =>
             parts.AddOrUpdate(key.GetHashCode(), key, value, partHashMask);
 
         private static void RefAddOrUpdatePart<K, V>(ref ImHashMap<K, V> part, int hash, K key, V value) =>
