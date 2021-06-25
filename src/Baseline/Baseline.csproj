@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Grab bag of generic utilities and extension methods for .Net development</Description>
-    <VersionPrefix>3.1.2</VersionPrefix>
+    <VersionPrefix>3.2.0</VersionPrefix>
     <Authors>Jeremy D. Miller;Brandon Behrens;Andrew Kharlamov</Authors>
     <TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
     <AssemblyName>Baseline</AssemblyName>
