@@ -72,7 +72,7 @@ namespace Baseline.Dates
         {
             var parts = representation.Split('@');
 
-            if (parts.Count() == 1)
+            if (parts.Length == 1)
             {
                 TimeZone = TimeZoneInfo.Local;
 
@@ -83,8 +83,7 @@ namespace Baseline.Dates
             {
                 TimeZone = TimeZoneInfo.FindSystemTimeZoneById(parts[1]);
 
-                DateTime time;
-                if (DateTime.TryParseExact(parts.First(), "r", null, DateTimeStyles.RoundtripKind, out time))
+                if (DateTime.TryParseExact(parts.First(), "r", null, DateTimeStyles.RoundtripKind, out DateTime time))
                     UtcTime = time;
                 else
                     UtcTime = findLocalTime(parts.First()).ToUniversalTime();
@@ -95,7 +94,7 @@ namespace Baseline.Dates
         {
             var parts = text.Split(':');
 
-            if (parts.Count() == 1)
+            if (parts.Length == 1)
                 return DateTime.Today.Add(text.ToTime());
 
             var date = new Date(parts.First());
@@ -131,14 +130,14 @@ namespace Baseline.Dates
             get { return UtcTime.ToLocalTime(TimeZone); }
         }
 
-        public bool Equals(LocalTime other)
+        public bool Equals(LocalTime? other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return Equals(other.TimeZone.Id, TimeZone.Id) && other.UtcTime.Equals(UtcTime);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
@@ -154,9 +153,9 @@ namespace Baseline.Dates
             }
         }
 
-        public int CompareTo(LocalTime other)
+        public int CompareTo(LocalTime? other)
         {
-            return UtcTime.CompareTo(other.UtcTime);
+            return UtcTime.CompareTo(other?.UtcTime);
         }
 
         public override string ToString()

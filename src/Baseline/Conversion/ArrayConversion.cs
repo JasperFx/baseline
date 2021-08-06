@@ -11,11 +11,11 @@ namespace Baseline.Conversion
             _conversions = conversions;
         }
 
-        public Func<string, object> ConverterFor(Type type)
+        public Func<string, object>? ConverterFor(Type type)
         {
             if (!type.IsArray) return null;
 
-            var innerType = type.GetElementType();
+            var innerType = type.GetElementType()!;
             var inner = _conversions.FindConverter(innerType);
 
             return stringValue =>
@@ -30,7 +30,7 @@ namespace Baseline.Conversion
 
                 for (var i = 0; i < strings.Length; i++)
                 {
-                    var value = inner(strings[i]);
+                    var value = inner?.Invoke(strings[i]);
                     array.SetValue(value, i);
                 }
 

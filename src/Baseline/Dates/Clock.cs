@@ -16,7 +16,7 @@ namespace Baseline.Dates
             _now = () => DateTime.Now;
         }
 
-        public Clock LocalNow(DateTime localTime, TimeZoneInfo localZone = null)
+        public Clock LocalNow(DateTime localTime, TimeZoneInfo? localZone = null)
         {
             var zone = localZone ?? TimeZoneInfo.Local;
             var now = localTime.ToUniversalTime(zone);
@@ -25,7 +25,7 @@ namespace Baseline.Dates
             return this;
         }
 
-        public Clock RestartAtLocal(DateTime desiredLocalTime, TimeZoneInfo localZone = null)
+        public Clock RestartAtLocal(DateTime desiredLocalTime, TimeZoneInfo? localZone = null)
         {
             var zone = localZone ?? TimeZoneInfo.Local;
             var desired = desiredLocalTime.ToUniversalTime(zone);

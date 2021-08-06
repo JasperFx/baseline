@@ -11,9 +11,9 @@ namespace Baseline.Expressions
     /// </summary>
     public class FindMembers: ExpressionVisitor
     {
-        internal static readonly PropertyInfo ArrayLength = typeof(Array).GetProperty(nameof(Array.Length));
+        internal static readonly PropertyInfo ArrayLength = typeof(Array).GetProperty(nameof(Array.Length))!;
         
-        public static MemberInfo Member<T>(Expression<Func<T, object>> expression)
+        public static MemberInfo? Member<T>(Expression<Func<T, object>> expression)
         {
             var finder = new FindMembers();
             finder.Visit(expression);

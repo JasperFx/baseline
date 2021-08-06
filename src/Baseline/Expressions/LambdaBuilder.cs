@@ -9,8 +9,8 @@ namespace Baseline.Expressions
     {
         public static Func<TTarget, TProperty> GetProperty<TTarget, TProperty>(PropertyInfo property)
         {
-            var target = Expression.Parameter(property.DeclaringType, "target");
-            var method = property.GetGetMethod();
+            var target = Expression.Parameter(property.DeclaringType!, "target");
+            var method = property.GetGetMethod()!;
 
             var callGetMethod = Expression.Call(target, method);
 
@@ -22,9 +22,9 @@ namespace Baseline.Expressions
             return lambda.Compile();
         }
 
-        public static Action<TTarget, TProperty> SetProperty<TTarget, TProperty>(PropertyInfo property)
+        public static Action<TTarget, TProperty>? SetProperty<TTarget, TProperty>(PropertyInfo property)
         {
-            var target = Expression.Parameter(property.DeclaringType, "target");
+            var target = Expression.Parameter(property.DeclaringType!, "target");
             var value = Expression.Parameter(property.PropertyType, "value");
 
             var method = property.SetMethod;
@@ -74,7 +74,7 @@ namespace Baseline.Expressions
         }
 
 
-        public static Action<TTarget, TMember> Setter<TTarget, TMember>(MemberInfo member)
+        public static Action<TTarget, TMember>? Setter<TTarget, TMember>(MemberInfo member)
         {
             return member is PropertyInfo
                 ? SetProperty<TTarget, TMember>(member.As<PropertyInfo>())

@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Baseline
 {
-    public class LightweightCache<TKey, TValue> : IEnumerable<TValue> 
+    public class LightweightCache<TKey, TValue> : IEnumerable<TValue> where TKey: notnull
     {
         private readonly IDictionary<TKey, TValue> _values;
 
@@ -39,7 +40,7 @@ namespace Baseline
 
         public Func<TKey, TValue> OnMissing
         {
-            set { _onMissing = value; }
+            set => _onMissing = value;
         }
 
         public Func<TValue, TKey> GetKey
@@ -53,7 +54,7 @@ namespace Baseline
             get { return _values.Count; }
         }
 
-        public TValue First
+        public TValue? First
         {
             get
             {
@@ -70,9 +71,7 @@ namespace Baseline
         {
             get
             {
-                TValue value;
-
-                if (!_values.TryGetValue(key, out value))
+                if (!_values.TryGetValue(key, out TValue? value))
                 {
                     value = _onMissing(key);
 
@@ -127,9 +126,9 @@ namespace Baseline
             _values.Add(key, value);
         }
 
-        public bool TryRetrieve(TKey key, out TValue value)
+        public bool TryRetrieve(TKey key, [MaybeNullWhen(false)] out TValue value)
         {
-            value = default(TValue);
+            value = default;
 
             if (_values.ContainsKey(key))
             {
@@ -170,7 +169,7 @@ namespace Baseline
             return returnValue;
         }
 
-        public TValue Find(Predicate<TValue> predicate)
+        public TValue? Find(Predicate<TValue> predicate)
         {
             foreach (var pair in _values)
             {
@@ -180,7 +179,7 @@ namespace Baseline
                 }
             }
 
-            return default(TValue);
+            return default;
         }
 
         public TValue[] GetAll()

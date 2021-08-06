@@ -12,7 +12,7 @@ namespace Baseline
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public class ConcurrentCache<TKey, TValue> : IEnumerable<TValue>
+    public class ConcurrentCache<TKey, TValue> : IEnumerable<TValue> where TKey: notnull
     {
         private readonly ConcurrentDictionary<TKey, TValue> _values;
 
@@ -177,7 +177,7 @@ namespace Baseline
 
         public void Remove(TKey key)
         {
-            TValue _;
+            TValue? _;
             _values.TryRemove(key, out _);
         }
 
@@ -188,8 +188,7 @@ namespace Baseline
 
         public bool WithValue(TKey key, Action<TValue> callback)
         {
-            TValue value;
-            if (_values.TryGetValue(key, out value))
+            if (_values.TryGetValue(key, out TValue? value))
             {
                 callback(value);
                 return true;

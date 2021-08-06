@@ -8,7 +8,7 @@ namespace Baseline.Reflection
     public class SingleMethod : Accessor
     {
         private readonly MethodValueGetter _getter;
-        private readonly Type _ownerType;
+        private readonly Type? _ownerType;
 
         public SingleMethod(MethodValueGetter getter)
         {
@@ -22,14 +22,14 @@ namespace Baseline.Reflection
         }
 
 
-        public string FieldName { get { return _getter.Name; } }
+        public string FieldName => _getter.Name;
 
-        public Type PropertyType { get { return _getter.ReturnType; } }
+        public Type PropertyType => _getter.ReturnType;
 
-        public Type DeclaringType { get { return _getter.DeclaringType; } }
+        public Type DeclaringType => _getter.DeclaringType;
 
 
-        public PropertyInfo InnerProperty { get { return null; } }
+        public PropertyInfo? InnerProperty => null;
 
         public Accessor GetChildAccessor<T>(Expression<Func<T, object>> expression)
         {
@@ -58,35 +58,29 @@ namespace Baseline.Reflection
             yield return _getter;
         }
 
-        public string Name { get { return _getter.Name; } }
+        public string Name => _getter.Name;
 
         public virtual void SetValue(object target, object propertyValue)
         {
             // no-op
         }
 
-        public object GetValue(object target)
+        public object? GetValue(object target)
         {
             return _getter.GetValue(target);
         }
 
-        public Type OwnerType
-        {
-            get
-            {
-                return _ownerType ?? DeclaringType;
-            }
-        }
+        public Type OwnerType => _ownerType ?? DeclaringType;
 
 
-        public bool Equals(SingleMethod other)
+        public bool Equals(SingleMethod? other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return Equals(other._getter, _getter);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

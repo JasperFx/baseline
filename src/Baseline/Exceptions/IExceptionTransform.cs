@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 
@@ -19,7 +20,7 @@ namespace Baseline.Exceptions
         /// <param name="original"></param>
         /// <param name="transformed"></param>
         /// <returns></returns>
-        bool TryTransform(Exception original, out Exception transformed);
+        bool TryTransform(Exception original, [NotNullWhen(true)] out Exception? transformed);
     }
 
     /// <summary>
@@ -95,7 +96,7 @@ namespace Baseline.Exceptions
     {
         private readonly IList<FilterRule> _rules = new List<FilterRule>();
         
-        public bool TryTransform(Exception original, out Exception transformed)
+        public bool TryTransform(Exception original, [NotNullWhen(true)] out Exception? transformed)
         {
             if (original is T exception)
             {
@@ -128,7 +129,7 @@ namespace Baseline.Exceptions
             return new FilterRule(filter, this);
         }
 
-        public FilterRule IfInnerIs<TInner>(Func<TInner, bool> innerFilter = null)
+        public FilterRule IfInnerIs<TInner>(Func<TInner, bool>? innerFilter = null)
         {
             if (innerFilter == null)
             {
@@ -157,7 +158,7 @@ namespace Baseline.Exceptions
 
             internal Func<T, bool> Filter { get; }
 
-            internal Func<T, Exception> Transform { get; private set; }
+            internal Func<T, Exception> Transform { get; private set; } = null!;
         }
     }
     

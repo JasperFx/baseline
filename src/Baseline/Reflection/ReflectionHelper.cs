@@ -57,15 +57,15 @@ namespace Baseline.Reflection
             return (PropertyInfo) memberExpression.Member;
         }
 
-        public static PropertyInfo GetProperty(LambdaExpression expression)
+        public static PropertyInfo? GetProperty(LambdaExpression expression)
         {
-            MemberExpression memberExpression = GetMemberExpression(expression, true);
-            return (PropertyInfo)memberExpression.Member;
+            MemberExpression? memberExpression = GetMemberExpression(expression, true);
+            return (PropertyInfo?)memberExpression?.Member;
         }
 
         private static MemberExpression getMemberExpression<TModel, T>(Expression<Func<TModel, T>> expression)
         {
-            MemberExpression memberExpression = null;
+            MemberExpression? memberExpression = null;
             if (expression.Body.NodeType == ExpressionType.Convert)
             {
                 var body = (UnaryExpression) expression.Body;
@@ -83,14 +83,13 @@ namespace Baseline.Reflection
 
         public static Accessor GetAccessor(LambdaExpression expression)
         {
-            MemberExpression memberExpression = GetMemberExpression(expression, true);
+            MemberExpression memberExpression = GetMemberExpression(expression, true)!;
 
             return GetAccessor(memberExpression);
         }
-
-        public static MemberExpression GetMemberExpression(this LambdaExpression expression, bool enforceMemberExpression)
+        public static MemberExpression? GetMemberExpression(this LambdaExpression expression, bool enforceMemberExpression)
         {
-            MemberExpression memberExpression = null;
+            MemberExpression? memberExpression = null;
             if (expression.Body.NodeType == ExpressionType.Convert)
             {
                 var body = (UnaryExpression)expression.Body;
@@ -138,20 +137,19 @@ namespace Baseline.Reflection
 
             buildValueGetters(memberExpression, list);
 
-            if (list.Count == 1 && list[0] is PropertyValueGetter)
+            if (list.Count == 1 && list[0] is PropertyValueGetter propertyValueGetter)
             {
-                var propertyValueGetter = list[0] as PropertyValueGetter;
-                return propertyValueGetter != null ? new SingleProperty(propertyValueGetter.PropertyInfo) : null;
+                return new SingleProperty(propertyValueGetter.PropertyInfo);
             }
 
-            if (list.Count == 1 && list[0] is MethodValueGetter)
+            if (list.Count == 1 && list[0] is MethodValueGetter methodValueGetter)
             {
-                return new SingleMethod((MethodValueGetter) list[0]);
+                return new SingleMethod(methodValueGetter);
             }
 
-            if (list.Count == 1 && list[0] is IndexerValueGetter)
+            if (list.Count == 1 && list[0] is IndexerValueGetter indexValueGetter)
             {
-                return new ArrayIndexer((IndexerValueGetter) list[0]);
+                return new ArrayIndexer(indexValueGetter);
             }
 
             list.Reverse();
@@ -160,8 +158,7 @@ namespace Baseline.Reflection
 
         private static void buildValueGetters(Expression expression, IList<IValueGetter> list)
         {
-            var memberExpression = expression as MemberExpression;
-            if (memberExpression != null)
+            if (expression is MemberExpression memberExpression)
             {
                 var propertyInfo = (PropertyInfo) memberExpression.Member;
                 list.Add(new PropertyValueGetter(propertyInfo));
@@ -172,11 +169,10 @@ namespace Baseline.Reflection
             }
 
             //deals with collection indexers, an indexer [0] will look like a get(0) method call expression
-            var methodCallExpression = expression as MethodCallExpression;
-            if (methodCallExpression != null)
+            if (expression is MethodCallExpression methodCallExpression)
             {
                 var methodInfo = methodCallExpression.Method;
-                Expression argument = methodCallExpression.Arguments.FirstOrDefault();
+                Expression? argument = methodCallExpression.Arguments.FirstOrDefault();
 
                 if (argument == null)
                 {
@@ -185,10 +181,9 @@ namespace Baseline.Reflection
                 }
                 else
                 {
-                    object value;
-                    if (TryEvaluateExpression(argument, out value))
+                    if (TryEvaluateExpression(argument, out object? value))
                     {
-                        var methodValueGetter = new MethodValueGetter(methodInfo, new object[] { value });
+                        var methodValueGetter = new MethodValueGetter(methodInfo, new object[] { value! });
                         list.Add(methodValueGetter);
                     }  
                 }
@@ -207,10 +202,9 @@ namespace Baseline.Reflection
 
                 var indexExpression = binaryExpression.Right;
 
-                object index;
-                if (TryEvaluateExpression(indexExpression, out index))
+                if (TryEvaluateExpression(indexExpression, out object? index))
                 {
-                    var indexValueGetter = new IndexerValueGetter(binaryExpression.Left.Type, (int) index);
+                    var indexValueGetter = new IndexerValueGetter(binaryExpression.Left.Type, (int) index!);
                     
                     list.Add(indexValueGetter);
                 }
@@ -218,8 +212,9 @@ namespace Baseline.Reflection
                 buildValueGetters(binaryExpression.Left, list);
             }
         }
-
-        private static bool TryEvaluateExpression(Expression operation, out object value)
+        
+        
+        private static bool TryEvaluateExpression(Expression? operation, out object? value)
         {
             if (operation == null)
             {   // used for static fields, etc
@@ -233,16 +228,15 @@ namespace Baseline.Reflection
                     return true;
                 case ExpressionType.MemberAccess:
                     MemberExpression me = (MemberExpression)operation;
-                    object target;
-                    if (TryEvaluateExpression(me.Expression, out target))
+                    if (TryEvaluateExpression(me.Expression, out object? target))
                     { // instance target
-                        FieldInfo fieldInfo;
+                        FieldInfo? fieldInfo;
                         if (null != (fieldInfo = me.Member as FieldInfo))
                         {
                             value = fieldInfo.GetValue(target);
                             return true;
                         }
-                        PropertyInfo propertyInfo;
+                        PropertyInfo? propertyInfo;
                         if (null != (propertyInfo = me.Member as PropertyInfo))
                         {
                             value = propertyInfo.GetValue(target, null);
@@ -301,14 +295,14 @@ namespace Baseline.Reflection
 
     public class FindMethodVisitor : ExpressionVisitorBase
     {
-        private MethodInfo _method;
+        private MethodInfo? _method;
 
         public FindMethodVisitor(Expression expression)
         {
             Visit(expression);
         }
-
-        public MethodInfo Method { get { return _method; } }
+        
+        public MethodInfo Method => _method!;
 
         protected override Expression VisitMethodCall(MethodCallExpression m)
         {
@@ -328,9 +322,9 @@ namespace Baseline.Reflection
     [DebuggerStepThrough, DebuggerNonUserCode]
     public abstract class ExpressionVisitorBase
     {
-        public virtual Expression Visit(Expression exp)
+        public virtual Expression Visit(Expression? exp)
         {
-            if (exp == null) return exp;
+            if (exp == null) return exp!;
 
             switch (exp.NodeType)
             {
@@ -507,7 +501,7 @@ namespace Baseline.Reflection
 
         protected virtual ReadOnlyCollection<Expression> VisitList(ReadOnlyCollection<Expression> original)
         {
-            List<Expression> list = null;
+            List<Expression>? list = null;
             for (int i = 0, n = original.Count; i < n; i++)
             {
                 Expression p = Visit(original[i]);
@@ -569,7 +563,7 @@ namespace Baseline.Reflection
 
         protected virtual IEnumerable<MemberBinding> VisitBindingList(ReadOnlyCollection<MemberBinding> original)
         {
-            List<MemberBinding> list = null;
+            List<MemberBinding>? list = null;
             for (int i = 0, n = original.Count; i < n; i++)
             {
                 MemberBinding b = VisitBinding(original[i]);
@@ -596,7 +590,7 @@ namespace Baseline.Reflection
 
         protected virtual IEnumerable<ElementInit> VisitElementInitializerList(ReadOnlyCollection<ElementInit> original)
         {
-            List<ElementInit> list = null;
+            List<ElementInit>? list = null;
             for (int i = 0, n = original.Count; i < n; i++)
             {
                 ElementInit init = VisitElementInitializer(original[i]);
@@ -637,9 +631,9 @@ namespace Baseline.Reflection
             if (args != nex.Arguments)
             {
                 if (nex.Members != null)
-                    return Expression.New(nex.Constructor, args, nex.Members);
+                    return Expression.New(nex.Constructor!, args, nex.Members);
                 else
-                    return Expression.New(nex.Constructor, args);
+                    return Expression.New(nex.Constructor!, args);
             }
 
             return nex;
@@ -678,11 +672,11 @@ namespace Baseline.Reflection
             {
                 if (na.NodeType == ExpressionType.NewArrayInit)
                 {
-                    return Expression.NewArrayInit(na.Type.GetElementType(), exprs);
+                    return Expression.NewArrayInit(na.Type.GetElementType()!, exprs);
                 }
                 else
                 {
-                    return Expression.NewArrayBounds(na.Type.GetElementType(), exprs);
+                    return Expression.NewArrayBounds(na.Type.GetElementType()!, exprs);
                 }
             }
 

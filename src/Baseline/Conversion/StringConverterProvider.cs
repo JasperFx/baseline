@@ -6,7 +6,7 @@ namespace Baseline.Conversion
 {
     public class StringConverterProvider : IConversionProvider
     {
-        public Func<string, object> ConverterFor (Type type)
+        public Func<string, object>? ConverterFor (Type type)
         {
             if (!type.IsConcrete()) {
                 return null;

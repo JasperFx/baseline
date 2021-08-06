@@ -83,13 +83,13 @@ namespace Baseline
             fileSystem.CreateDirectory(FileSystem.Combine(pathParts));
         }
 
-        public static string SearchUpForDirectory(this IFileSystem fileSystem, string startingPoint, string directoryToFind)
+        public static string? SearchUpForDirectory(this IFileSystem fileSystem, string startingPoint, string directoryToFind)
         {
             var dirs = fileSystem.ChildDirectoriesFor(startingPoint).Select(dir => new DirectoryInfo(dir));
             if(!dirs.Any(dir=>dir.Name.EqualsIgnoreCase(directoryToFind)))
             {
                 var par = Directory.GetParent(startingPoint);
-                if(par.Parent == null)
+                if(par?.Parent == null)
                 {
                     return null;
                 }
@@ -102,7 +102,7 @@ namespace Baseline
         }
 
 
-        public static string SearchUpForDirectory(this IFileSystem fileSystem, string directoryToFind)
+        public static string? SearchUpForDirectory(this IFileSystem fileSystem, string directoryToFind)
         {
             return fileSystem.SearchUpForDirectory(".", directoryToFind);
         }

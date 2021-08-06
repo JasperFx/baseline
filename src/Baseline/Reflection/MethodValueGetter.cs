@@ -21,7 +21,7 @@ namespace Baseline.Reflection
             _arguments = arguments;
         }
 
-        public object GetValue(object target)
+        public object? GetValue(object target)
         {
             return _methodInfo.Invoke(target, _arguments);
         }
@@ -37,20 +37,11 @@ namespace Baseline.Reflection
             }
         }
 
-        public Type DeclaringType
-        {
-            get { return _methodInfo.DeclaringType; }
-        }
+        public Type DeclaringType => _methodInfo.DeclaringType!;
 
-        public Type ValueType
-        {
-            get { return _methodInfo.ReturnType; }
-        }
+        public Type ValueType => _methodInfo.ReturnType;
 
-        public Type ReturnType
-        {
-            get { return _methodInfo.ReturnType; }
-        }
+        public Type ReturnType => _methodInfo.ReturnType;
 
         public Expression ChainExpression(Expression body)
         {
@@ -62,7 +53,7 @@ namespace Baseline.Reflection
             throw new NotSupportedException();
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
@@ -70,7 +61,7 @@ namespace Baseline.Reflection
             return Equals((MethodValueGetter)obj);
         }
 
-        public bool Equals(MethodValueGetter other)
+        public bool Equals(MethodValueGetter? other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;

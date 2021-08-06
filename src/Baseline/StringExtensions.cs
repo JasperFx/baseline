@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Baseline
             return Path.Combine(root, path);
         }
 
-        public static void IfNotNull(this string target, Action<string> continuation)
+        public static void IfNotNull(this string? target, Action<string> continuation)
         {
             if (target != null)
             {
@@ -46,7 +47,7 @@ namespace Baseline
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string ParentDirectory(this string path)
+        public static string? ParentDirectory(this string path)
         {
             return Path.GetDirectoryName(path.TrimEnd(Path.DirectorySeparatorChar));
         }
@@ -94,17 +95,17 @@ namespace Baseline
             return pathParts.Count > 0 ? FileSystem.Combine(pathParts.ToArray()) : string.Empty;
         }
 
-        public static bool IsEmpty(this string stringValue)
+        public static bool IsEmpty([NotNullWhen(false)] this string? stringValue)
         {
             return string.IsNullOrEmpty(stringValue);
         }
 
-        public static bool IsNotEmpty(this string stringValue)
+        public static bool IsNotEmpty([NotNullWhen(true)] this string? stringValue)
         {
             return !string.IsNullOrEmpty(stringValue);
         }
 
-        public static void IsNotEmpty(this string stringValue, Action<string> action)
+        public static void IsNotEmpty([NotNullWhen(true)] this string? stringValue, Action<string> action)
         {
             if (stringValue.IsNotEmpty())
                 action(stringValue);
@@ -211,7 +212,7 @@ namespace Baseline
             return path.Split(new[] {Path.DirectorySeparatorChar}, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
 		
-		public static string DirectoryPath(this string path)
+		public static string? DirectoryPath(this string path)
 		{
 			return Path.GetDirectoryName(path);
 		}
@@ -224,7 +225,7 @@ namespace Baseline
         public static IEnumerable<string> ReadLines(this string text)
         {
             var reader = new StringReader(text);
-            string line;
+            string? line;
             while ((line = reader.ReadLine()) != null)
             {
                 yield return line;
@@ -239,7 +240,7 @@ namespace Baseline
         public static void ReadLines(this string text, Action<string> callback)
         {
             var reader = new StringReader(text);
-            string line;
+            string? line;
             while ((line = reader.ReadLine()) != null)
             {
                 callback(line);

@@ -14,35 +14,23 @@ namespace Baseline.Reflection
             Index = index;
         }
 
-        public object GetValue(object target)
+        public object? GetValue(object target)
         {
             return ((Array)target).GetValue(Index);
         }
 
-        public string Name
-        {
-            get
-            {
-                return "[{0}]".ToFormat(Index);
-            }
-        }
+        public string Name => "[{0}]".ToFormat(Index);
 
         public int Index { get; private set; }
 
-        public Type DeclaringType
-        {
-            get { return _arrayType; }
-        }
+        public Type DeclaringType => _arrayType;
 
-        public Type ValueType
-        {
-            get { return _arrayType.GetElementType(); }
-        }
+        public Type ValueType => _arrayType.GetElementType()!;
 
         public Expression ChainExpression(Expression body)
         {
             var memberExpression = Expression.ArrayIndex(body, Expression.Constant(Index, typeof(int)));
-            if (!_arrayType.GetElementType().GetTypeInfo().IsValueType)
+            if (!_arrayType.GetElementType()!.GetTypeInfo().IsValueType)
             {
                 return memberExpression;
             }
@@ -60,7 +48,7 @@ namespace Baseline.Reflection
             return _arrayType == other._arrayType && Index == other.Index;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

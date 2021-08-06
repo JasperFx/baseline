@@ -9,7 +9,7 @@ namespace Baseline.Reflection
 {
     public static class ReflectionExtensions
     {
-        public static U ValueOrDefault<T, U>(this T root, Expression<Func<T, U>> expression)
+        public static U? ValueOrDefault<T, U>(this T? root, Expression<Func<T, U>> expression)
             where T : class
         {
             if (root == null)
@@ -21,28 +21,28 @@ namespace Baseline.Reflection
 
             var result = accessor.GetValue(root);
 
-            return (U) (result ?? default(U));
+            return (U) (result ?? default(U))!;
         }
 
-        public static T GetAttribute<T>(this MemberInfo provider) where T : Attribute
+        public static T? GetAttribute<T>(this MemberInfo provider) where T : Attribute
         {
             var atts = provider.GetCustomAttributes(typeof (T), true);
             return atts.FirstOrDefault() as T;
         }
 
-        public static T GetAttribute<T>(this Assembly provider) where T : Attribute
+        public static T? GetAttribute<T>(this Assembly provider) where T : Attribute
         {
             var atts = provider.GetCustomAttributes(typeof(T));
             return atts.FirstOrDefault() as T;
         }
 
-        public static T GetAttribute<T>(this Module provider) where T : Attribute
+        public static T? GetAttribute<T>(this Module provider) where T : Attribute
         {
             var atts = provider.GetCustomAttributes(typeof(T));
             return atts.FirstOrDefault() as T;
         }
 
-        public static T GetAttribute<T>(this ParameterInfo provider) where T : Attribute
+        public static T? GetAttribute<T>(this ParameterInfo provider) where T : Attribute
         {
             var atts = provider.GetCustomAttributes(typeof(T), true);
             return atts.FirstOrDefault() as T;
@@ -68,9 +68,9 @@ namespace Baseline.Reflection
             return provider.GetCustomAttributes(typeof(T), true).OfType<T>();
         }
 
-        public static IEnumerable<T> GetAllAttributes<T>(this Accessor accessor) where T : Attribute
+        public static IEnumerable<T>? GetAllAttributes<T>(this Accessor accessor) where T : Attribute
         {
-            return accessor.InnerProperty.GetAllAttributes<T>();
+            return accessor.InnerProperty?.GetAllAttributes<T>();
         }
 
         public static bool HasAttribute<T>(this Assembly provider) where T : Attribute
@@ -179,20 +179,20 @@ namespace Baseline.Reflection
 
         public static void ForAttribute<T>(this Accessor accessor, Action<T> action) where T : Attribute
         {
-            foreach (T attribute in accessor.InnerProperty.GetAllAttributes<T>())
+            foreach (T attribute in accessor.InnerProperty!.GetAllAttributes<T>())
             {
                 action(attribute);
             }
         }
 
-        public static T GetAttribute<T>(this Accessor provider) where T : Attribute
+        public static T? GetAttribute<T>(this Accessor provider) where T : Attribute
         {
-            return provider.InnerProperty.GetAttribute<T>();
+            return provider.InnerProperty?.GetAttribute<T>();
         }
 
         public static bool HasAttribute<T>(this Accessor provider) where T : Attribute
         {
-            return provider.InnerProperty.HasAttribute<T>();
+            return provider.InnerProperty?.HasAttribute<T>() ?? false;
         }
 
         public static Accessor ToAccessor<T>(this Expression<Func<T, object>> expression)
@@ -219,24 +219,6 @@ namespace Baseline.Reflection
             return accessor.PropertyType.IsTypeOrNullableOf<int>() || accessor.PropertyType.IsTypeOrNullableOf<long>();
         }
 
-#if netstandard13
-        public static void ForAttribute<T>(this Type type, Action<T> action) where T : Attribute
-        {
-            type.GetTypeInfo().ForAttribute(action);
-        }
-
-        public static bool HasAttribute<T>(this Type type) where T : Attribute
-        {
-            return type.GetTypeInfo().HasAttribute<T>();
-        }
-
-        public static T GetAttribute<T>(this Type type) where T : Attribute
-        {
-            return type.GetTypeInfo().GetAttribute<T>();
-        }
-
-
-#endif
         
         /// <summary>
         /// Does a .Net type have a default, no arg constructor
@@ -255,7 +237,7 @@ namespace Baseline.Reflection
         /// </summary>
         /// <param name="instance"></param>
         /// <returns></returns>
-        public static bool IsAnonymousType(this object instance)
+        public static bool IsAnonymousType(this object? instance)
         {
             if (instance == null)
                 return false;
@@ -279,7 +261,7 @@ namespace Baseline.Reflection
             sb.Append(t.Name.Substring(0, t.Name.LastIndexOf("`", StringComparison.Ordinal)));
             sb.Append(t.GetGenericArguments().Aggregate("<",
                 (aggregate, type) => aggregate + (aggregate == "<" ? "" : ",") + GetPrettyName(type)));
-            sb.Append(">");
+            sb.Append('>');
 
             return sb.ToString();
         }

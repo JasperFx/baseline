@@ -6,7 +6,7 @@ namespace Baseline.Conversion
 {
     public class Conversions
     {
-        private readonly LightweightCache<Type, Func<string, object>> _convertors;
+        private readonly LightweightCache<Type, Func<string, object?>?> _convertors;
         private readonly IList<IConversionProvider> _providers = new List<IConversionProvider>();
 
 
@@ -15,7 +15,7 @@ namespace Baseline.Conversion
 
 
             _convertors =
-                new LightweightCache<Type, Func<string, object>>(
+                new LightweightCache<Type, Func<string, object?>?>(
                     type =>
                     {
                         return providers().FirstValue(x => x.ConverterFor(type));
@@ -69,14 +69,14 @@ namespace Baseline.Conversion
             _convertors[typeof (T)] = x => convertor(x);
         }
 
-        public Func<string, object> FindConverter(Type type)
+        public Func<string, object?>? FindConverter(Type type)
         {
             return _convertors[type];
         }
 
-        public object Convert(Type type, string raw)
+        public object? Convert(Type type, string raw)
         {
-            return _convertors[type](raw);
+            return _convertors[type]?.Invoke(raw);
         }
 
         public bool Has(Type type)

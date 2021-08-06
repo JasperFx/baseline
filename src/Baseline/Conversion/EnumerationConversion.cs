@@ -6,7 +6,7 @@ namespace Baseline.Conversion
     // SAMPLE: EnumerationConversion
     public class EnumerationConversion : IConversionProvider
     {
-        public Func<string, object> ConverterFor(Type type)
+        public Func<string, object>? ConverterFor(Type type)
         {
             if (type.GetTypeInfo().IsEnum)
             {
