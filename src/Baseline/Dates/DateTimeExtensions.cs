@@ -52,7 +52,7 @@ namespace Baseline.Dates
         /// <returns></returns>
         public static DateTime ToLocalTime(this DateTime? utcTime, TimeZoneInfo targetTimeZone)
         {
-            return TimeZoneInfo.ConvertTime(utcTime.Value, targetTimeZone);
+            return TimeZoneInfo.ConvertTime(utcTime!.Value, targetTimeZone);
         }
 
         /// <summary>
@@ -70,9 +70,9 @@ namespace Baseline.Dates
             return TimeZoneInfo.ConvertTime(localTime, sourceTimeZone);
         }
 
-        public static LocalTime ToLocal(this DateTime localTime, TimeZoneInfo timeZone = null)
+        public static LocalTime ToLocal(this DateTime localTime, TimeZoneInfo? timeZone = null)
         {
-            timeZone = timeZone ?? TimeZoneInfo.Local;
+            timeZone ??= TimeZoneInfo.Local;
 
             return new LocalTime(localTime.ToUniversalTime(timeZone), timeZone);
         }

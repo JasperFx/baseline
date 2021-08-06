@@ -6,12 +6,12 @@ namespace Baseline
 {
     public static class DictionaryExtensions
     {
-        public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+        public static TValue? Get<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key) where TKey : notnull
         {
-            return dictionary.Get(key, default(TValue));
+            return dictionary.Get(key, default);
         }
 
-        public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue)
+        public static TValue? Get<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue? defaultValue) where TKey : notnull
         {
             if (dictionary.ContainsKey(key)) return dictionary[key];
             return defaultValue;
@@ -21,7 +21,7 @@ namespace Baseline
         /// This is a big THANK YOU to the BCL for not hooking a brotha' up
         /// This add will tell WHAT KEY you added twice.
         /// </summary>
-        public static void SmartAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        public static void SmartAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value) where TKey: notnull
         {
             try
             {

@@ -34,14 +34,14 @@ namespace Baseline
             return new Date(Day.AddDays(1));
         }
 
-        public bool Equals(Date other)
+        public bool Equals(Date? other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return other.Day.Equals(Day);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

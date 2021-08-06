@@ -7,7 +7,7 @@ namespace Baseline.Reflection
 {
     public class AccessorRules
     {
-        private readonly Cache<Type, Cache<Accessor, IList<object>>> _rules = new Cache<Type, Cache<Accessor, IList<object>>>(type => {
+        private readonly Cache<Type, Cache<Accessor, IList<object>>> _rules = new(type => {
             return new Cache<Accessor, IList<object>>(a => new List<object>());
         });
 
@@ -31,7 +31,7 @@ namespace Baseline.Reflection
             return _rules[accessor.OwnerType][accessor].OfType<T>();
         } 
 
-        public T FirstRule<T>(Accessor accessor)
+        public T? FirstRule<T>(Accessor accessor)
         {
             return AllRulesFor<T>(accessor).FirstOrDefault();
         }
@@ -41,7 +41,7 @@ namespace Baseline.Reflection
             return AllRulesFor<TRule>(expression.ToAccessor());
         }
 
-        public TRule FirstRule<T, TRule>(Expression<Func<T, object>> expression)
+        public TRule? FirstRule<T, TRule>(Expression<Func<T, object>> expression)
         {
             return FirstRule<TRule>(expression.ToAccessor());
         }

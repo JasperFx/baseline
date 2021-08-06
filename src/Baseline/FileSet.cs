@@ -13,7 +13,7 @@ namespace Baseline
         /// <param name="include">Semicolon delimited list of search criteria to be included in the results</param>
         /// <param name="exclude">Semicolon delimited list of search criteria to be excluded in the results</param>
         /// <returns></returns>
-        public static FileSet Deep(string include, string exclude = null)
+        public static FileSet Deep(string include, string? exclude = null)
         {
             return new FileSet{
                 DeepSearch = true,
@@ -28,7 +28,7 @@ namespace Baseline
         /// <param name="include">Semicolon delimited list of search criteria to be included in the results</param>
         /// <param name="exclude">Semicolon delimited list of search criteria to be excluded in the results</param>
         /// <returns></returns>
-        public static FileSet Shallow(string include, string exclude = null)
+        public static FileSet Shallow(string include, string? exclude = null)
         {
             return new FileSet{
                 DeepSearch = false,
@@ -65,7 +65,7 @@ namespace Baseline
         public string Include { get; set; }
 
         [XmlAttribute]
-        public string Exclude { get; set; }
+        public string? Exclude { get; set; }
 
         /// <summary>
         /// Search in child directories?
@@ -93,7 +93,7 @@ namespace Baseline
                 : new string[0];
         }
 
-        private IEnumerable<string> getAllDistinctFiles(string path, string pattern)
+        private IEnumerable<string> getAllDistinctFiles(string path, string? pattern)
         {
             if (pattern.IsEmpty()) return new string[0];
 
@@ -149,14 +149,14 @@ namespace Baseline
             };
         }
 
-        public bool Equals(FileSet other)
+        public bool Equals(FileSet? other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return Equals(other.Include, Include) && Equals(other.Exclude, Exclude) && other.DeepSearch.Equals(DeepSearch);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

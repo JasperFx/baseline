@@ -6,9 +6,11 @@ namespace Baseline.Dates
     public class Period
     {
         // For serialization
+#nullable disable
         public Period()
         {
         }
+#nullable enable
 
         public Period(DateTime utcTime) : this(new LocalTime(utcTime, TimeZoneInfo.Utc))
         {
@@ -27,7 +29,7 @@ namespace Baseline.Dates
 
 
         public LocalTime From { get; set; }
-        public LocalTime To { get; set; }
+        public LocalTime? To { get; set; }
 
         public void MarkCompleted(LocalTime completedTime)
         {
@@ -36,7 +38,7 @@ namespace Baseline.Dates
 
         public override string ToString()
         {
-            return "{0} - {1}".ToFormat(From, To);
+            return "{0} - {1}".ToFormat(From, To!);
         }
 
         public bool IsActiveAt(LocalTime timestamp)
@@ -53,14 +55,14 @@ namespace Baseline.Dates
                 : true;
         }
 
-        public bool Equals(Period other)
+        public bool Equals(Period? other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return Equals(other.From, From) && Equals(other.To, To);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

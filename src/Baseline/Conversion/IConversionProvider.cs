@@ -9,7 +9,7 @@ namespace Baseline.Conversion
         // Func that can parse a string into that Type
         // or return null to let another IConversionProvider
         // handle this type
-        Func<string, object> ConverterFor(Type type);
+        Func<string, object?>? ConverterFor(Type type);
     }
     // ENDSAMPLE
 }

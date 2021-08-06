@@ -4,7 +4,7 @@ namespace Baseline.Dates
 {
     public interface ISettableClock : ISystemTime
     {
-        ISettableClock LocalNow(DateTime now, TimeZoneInfo timeZone = null);
+        ISettableClock LocalNow(DateTime now, TimeZoneInfo? timeZone = null);
         ISettableClock LocalNow(LocalTime time);
     }
 
@@ -31,7 +31,7 @@ namespace Baseline.Dates
             return this;
         }
 
-        public ISettableClock LocalNow(DateTime now, TimeZoneInfo timeZone = null)
+        public ISettableClock LocalNow(DateTime now, TimeZoneInfo? timeZone = null)
         {
             _timeZone = timeZone ?? TimeZoneInfo.Local;
             _time = now.ToUniversalTime(_timeZone);

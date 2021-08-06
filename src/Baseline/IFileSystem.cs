@@ -62,7 +62,7 @@ namespace Baseline
         void ReadTextFile(string path, Action<string> reader);
         void MoveFiles(string from, string to);
 
-        string GetDirectory(string path);
+        string? GetDirectory(string path);
         string GetFileName(string path);
 
         /// <summary>

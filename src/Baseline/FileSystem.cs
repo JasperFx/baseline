@@ -19,7 +19,7 @@ namespace Baseline
     {
         public const int BufferSize = 32768;
 
-        public void CreateDirectory(string path)
+        public void CreateDirectory(string? path)
         {
             if (path.IsEmpty()) return;
 
@@ -201,12 +201,12 @@ namespace Baseline
             {
                 try
                 {
-                    return (T) serializer.Deserialize(stream);
+                    return (T) serializer.Deserialize(stream)!;
                 }
                 catch (Exception e)
                 {
                     var message = "Unable to deserialize the contents of file {0} into an instance of type {1}"
-                        .ToFormat(filename, typeof (T).FullName);
+                        .ToFormat(filename, typeof (T).FullName!);
                     throw new Exception(message, e);
                 }
             }
@@ -283,7 +283,7 @@ namespace Baseline
             using(var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
             using (var reader = new StreamReader(fileStream))
             {
-                string line;
+                string? line;
                 while ((line = reader.ReadLine()) != null)
                 {
                     callback(line.Trim());
@@ -296,7 +296,7 @@ namespace Baseline
             return Path.GetFullPath(path);
         }
 
-        public string GetDirectory(string path)
+        public string? GetDirectory(string path)
         {
             return Path.GetDirectoryName(path);
         }
@@ -372,7 +372,7 @@ namespace Baseline
             return paths.Aggregate(Path.Combine);
         }
 
-        public void LaunchBrowser(string filename)
+        public static void LaunchBrowser(string filename)
         {
             Process.Start("explorer", filename);
         }

@@ -81,14 +81,14 @@ namespace Baseline.Dates
             return _timestamp.HasValue ? _timestamp.Value < time : false;
         }
 
-        public bool Equals(Milestone other)
+        public bool Equals(Milestone? other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return other._timestamp.Equals(_timestamp);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

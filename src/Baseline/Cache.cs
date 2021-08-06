@@ -6,7 +6,7 @@ using Baseline.ImTools;
 
 namespace Baseline
 {
-    public class Cache<TKey, TValue> : IEnumerable<TValue>
+    public class Cache<TKey, TValue> : IEnumerable<TValue> where TKey : notnull
     {
         private readonly object _locker = new object();
         private ImHashMap<TKey, TValue> _values = ImHashMap<TKey, TValue>.Empty;

@@ -14,18 +14,19 @@ namespace Baseline.Reflection
             _getter = getter;
         }
 
-        public string FieldName { get { return _getter.Name; } }
-        public Type PropertyType { get { return _getter.ValueType; } }
-        public PropertyInfo InnerProperty { get { return null; } }
-        public Type DeclaringType { get { return _getter.DeclaringType; } }
-        public string Name { get { return _getter.Name; } }
-        public Type OwnerType { get { return DeclaringType; } }
+        public string FieldName => _getter.Name;
+        public Type PropertyType => _getter.ValueType;
+        public PropertyInfo? InnerProperty => null;
+        public Type DeclaringType => _getter.DeclaringType;
+        public string Name => _getter.Name;
+        public Type OwnerType => DeclaringType;
+
         public void SetValue(object target, object propertyValue)
         {
             _getter.SetValue(target, propertyValue);
         }
 
-        public object GetValue(object target)
+        public object? GetValue(object target)
         {
             return _getter.GetValue(target);
         }

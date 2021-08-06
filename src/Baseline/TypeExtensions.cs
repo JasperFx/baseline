@@ -38,7 +38,7 @@ namespace Baseline
             return (T) target;
         }
 
-        public static bool IsNullableOfT(this Type theType)
+        public static bool IsNullableOfT(this Type? theType)
         {
             if (theType == null) return false;
 
@@ -57,7 +57,7 @@ namespace Baseline
                    (theType.IsNullableOfT() && theType.GetGenericArguments()[0] == otherType);
         }
 
-        public static bool CanBeCastTo<T>(this Type type)
+        public static bool CanBeCastTo<T>(this Type? type)
         {
             if (type == null) return false;
             var destinationType = typeof(T);
@@ -65,7 +65,7 @@ namespace Baseline
             return CanBeCastTo(type, destinationType);
         }
 
-        public static bool CanBeCastTo(this Type type, Type destinationType)
+        public static bool CanBeCastTo(this Type? type, Type destinationType)
         {
             if (type == null) return false;
             if (type == destinationType) return true;
@@ -73,21 +73,21 @@ namespace Baseline
             return destinationType.IsAssignableFrom(type);
         }
 
-        public static bool IsInNamespace(this Type type, string nameSpace)
+        public static bool IsInNamespace(this Type? type, string nameSpace)
         {
-            if (type == null) return false;
+            if (type == null) return false; 
 
-            return type.Namespace.StartsWith(nameSpace);
+            return type.Namespace?.StartsWith(nameSpace) ?? false;
         }
 
-        public static bool IsOpenGeneric(this Type type)
+        public static bool IsOpenGeneric(this Type? type)
         {
             if (type == null) return false;
             var typeInfo = type.GetTypeInfo();
             return typeInfo.IsGenericTypeDefinition || typeInfo.ContainsGenericParameters;
         }
 
-        public static bool IsGenericEnumerable(this Type type)
+        public static bool IsGenericEnumerable(this Type? type)
         {
             if (type == null) return false;
 
@@ -95,7 +95,7 @@ namespace Baseline
             return genericArgs.Length == 1 && typeof(IEnumerable<>).MakeGenericType(genericArgs).IsAssignableFrom(type);
         }
 
-        public static bool IsConcreteTypeOf<T>(this Type pluggedType)
+        public static bool IsConcreteTypeOf<T>(this Type? pluggedType)
         {
             if (pluggedType == null) return false;
 
@@ -123,7 +123,7 @@ namespace Baseline
             return type.IsConcrete() && type.GetConstructor(new Type[0]) != null;
         }
 
-        public static Type FindInterfaceThatCloses(this Type type, Type openType)
+        public static Type? FindInterfaceThatCloses(this Type type, Type openType)
         {
             if (type == typeof(object)) return null;
 
@@ -147,10 +147,10 @@ namespace Baseline
 
             return typeInfo.BaseType == typeof(object)
                 ? null
-                : typeInfo.BaseType.FindInterfaceThatCloses(openType);
+                : typeInfo.BaseType?.FindInterfaceThatCloses(openType);
         }
 
-        public static Type FindParameterTypeTo(this Type type, Type openType)
+        public static Type? FindParameterTypeTo(this Type type, Type openType)
         {
             var interfaceType = type.FindInterfaceThatCloses(openType);
             return interfaceType?.GetGenericArguments().FirstOrDefault();
@@ -162,7 +162,7 @@ namespace Baseline
             return typeInfo.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
-        public static bool Closes(this Type type, Type openType)
+        public static bool Closes(this Type? type, Type openType)
         {
             if (type == null) return false;
 
@@ -205,7 +205,7 @@ namespace Baseline
             return type.Name;
         }
 
-        public static string GetFullName(this Type type)
+        public static string? GetFullName(this Type type)
         {
             var typeInfo = type.GetTypeInfo();
             if (typeInfo.IsGenericType)
@@ -236,7 +236,7 @@ namespace Baseline
             return typeInfo.IsPrimitive || IsString(type) || typeInfo.IsEnum;
         }
 
-        public static bool IsConcrete(this Type type)
+        public static bool IsConcrete(this Type? type)
         {
             if (type == null) return false;
 
@@ -341,20 +341,20 @@ namespace Baseline
         public static T CloseAndBuildAs<T>(this Type openType, params Type[] parameterTypes)
         {
             var closedType = openType.MakeGenericType(parameterTypes);
-            return (T) Activator.CreateInstance(closedType);
+            return (T) Activator.CreateInstance(closedType)!;
         }
 
         public static T CloseAndBuildAs<T>(this Type openType, object ctorArgument, params Type[] parameterTypes)
         {
             var closedType = openType.MakeGenericType(parameterTypes);
-            return (T) Activator.CreateInstance(closedType, ctorArgument);
+            return (T) Activator.CreateInstance(closedType, ctorArgument)!;
         }
 
         public static T CloseAndBuildAs<T>(this Type openType, object ctorArgument1, object ctorArgument2,
             params Type[] parameterTypes)
         {
             var closedType = openType.MakeGenericType(parameterTypes);
-            return (T) Activator.CreateInstance(closedType, ctorArgument1, ctorArgument2);
+            return (T) Activator.CreateInstance(closedType, ctorArgument1, ctorArgument2)!;
         }
 
         public static bool PropertyMatches(this PropertyInfo prop1, PropertyInfo prop2)
@@ -369,11 +369,11 @@ namespace Baseline
 
         public static object Create(this Type type)
         {
-            return Activator.CreateInstance(type);
+            return Activator.CreateInstance(type)!;
         }
 
 
-        public static Type DeriveElementType(this Type type)
+        public static Type? DeriveElementType(this Type type)
         {
             return type.GetElementType() ?? type.GetGenericArguments().FirstOrDefault();
         }
@@ -387,7 +387,7 @@ namespace Baseline
 
             if (type.IsArray)
             {
-                return type.GetElementType();
+                return type.GetElementType()!;
             }
 
             if (type.GetTypeInfo().IsGenericType)
@@ -429,7 +429,7 @@ namespace Baseline
             return type.GetTypeInfo().GetCustomAttributes<T>().Any();
         }
 
-        public static T GetAttribute<T>(this Type type) where T : Attribute
+        public static T? GetAttribute<T>(this Type type) where T : Attribute
         {
             return type.GetTypeInfo().GetCustomAttributes<T>().FirstOrDefault();
         }

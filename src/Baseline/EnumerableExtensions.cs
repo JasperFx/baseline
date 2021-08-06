@@ -158,12 +158,12 @@ namespace Baseline
         /// <param name="enumerable"></param>
         /// <param name="func"></param>
         /// <returns></returns>
-        public static TReturn FirstValue<TItem, TReturn>(this IEnumerable<TItem> enumerable, Func<TItem, TReturn> func)
+        public static TReturn? FirstValue<TItem, TReturn>(this IEnumerable<TItem> enumerable, Func<TItem, TReturn?> func)
             where TReturn : class
         {
             foreach (TItem item in enumerable)
             {
-                TReturn @object = func(item);
+                TReturn? @object = func(item);
                 if (@object != null) return @object;
             }
 

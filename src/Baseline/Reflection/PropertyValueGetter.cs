@@ -13,27 +13,18 @@ namespace Baseline.Reflection
             _propertyInfo = propertyInfo;
         }
 
-        public PropertyInfo PropertyInfo { get { return _propertyInfo; } }
+        public PropertyInfo PropertyInfo => _propertyInfo;
 
-        public object GetValue(object target)
+        public object? GetValue(object target)
         {
             return _propertyInfo.GetValue(target, null);
         }
 
-        public string Name
-        {
-            get { return _propertyInfo.Name; }
-        }
+        public string Name => _propertyInfo.Name;
 
-        public Type DeclaringType
-        {
-            get { return _propertyInfo.DeclaringType; }
-        }
+        public Type DeclaringType => _propertyInfo.DeclaringType!;
 
-        public Type ValueType
-        {
-            get { return _propertyInfo.PropertyType; }
-        }
+        public Type ValueType => _propertyInfo.PropertyType;
 
         public Expression ChainExpression(Expression body)
         {
@@ -51,7 +42,7 @@ namespace Baseline.Reflection
             _propertyInfo.SetValue(target, propertyValue, null);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
@@ -59,7 +50,7 @@ namespace Baseline.Reflection
             return Equals((PropertyValueGetter) obj);
         }
 
-        public bool Equals(PropertyValueGetter other)
+        public bool Equals(PropertyValueGetter? other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
