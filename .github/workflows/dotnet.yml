@@ -1,0 +1,28 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    
+env:
+  config: Release
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+
+    steps:
+    - uses: actions/checkout@v2
+
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Test
+      run: dotnet run --project build/build.csproj -- ci

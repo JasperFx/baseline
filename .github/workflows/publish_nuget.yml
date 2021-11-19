@@ -1,0 +1,32 @@
+name: Publish Nugets
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Build Baseline
+      run: dotnet build src/Baseline/Baseline.csproj --configuration Release
+
+    - name: Publish Alba
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+          PROJECT_FILE_PATH: src/Baseline/Baseline.csproj
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+
+    - name: Build BaselineTypeDiscovery
+      run: dotnet build src/BaselineTypeDiscovery/BaselineTypeDiscovery.csproj --configuration Release
+
+    - name: Publish Alba
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+          PROJECT_FILE_PATH: src/Baseline/Baseline.csproj
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
