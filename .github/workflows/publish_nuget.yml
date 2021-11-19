@@ -25,8 +25,15 @@ jobs:
     - name: Build BaselineTypeDiscovery
       run: dotnet build src/BaselineTypeDiscovery/BaselineTypeDiscovery.csproj --configuration Release
 
-    - name: Publish Alba
+    - name: Publish BaselineTypeDiscovery
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+          PROJECT_FILE_PATH: src/BaselineTypeDiscovery/BaselineTypeDiscovery.csproj
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+
+    - name: Publish Baseline
       uses: brandedoutcast/publish-nuget@v2.5.2
       with:
           PROJECT_FILE_PATH: src/Baseline/Baseline.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+
