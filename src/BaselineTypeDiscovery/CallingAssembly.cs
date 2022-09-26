@@ -24,7 +24,7 @@ namespace BaselineTypeDiscovery
         private static string GetStackTraceInEnglish()
         {
             var currentUiCulture = Thread.CurrentThread.CurrentUICulture;
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             string trace = Environment.StackTrace;
             Thread.CurrentThread.CurrentUICulture = currentUiCulture;
             return trace;
