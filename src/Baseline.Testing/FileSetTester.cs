@@ -208,7 +208,7 @@ namespace Baseline.Testing
             theFileSet.Include = "*.xml";
             theFileSet.Exclude = "a.xml";
 
-            new FileSystem().FindFiles("target", theFileSet).Select(x => Path.GetFileName(x)).ShouldHaveTheSameElementsAs("b.xml", "c.xml");
+            new FileSystem().FindFiles("target", theFileSet).Select(x => Path.GetFileName(x)).OrderBy(x => x).ShouldHaveTheSameElementsAs("b.xml", "c.xml");
         }
 
         [Fact]
