@@ -9,7 +9,7 @@
         <AssemblyName>BaselineTypeDiscovery</AssemblyName>
         <PackageId>BaselineTypeDiscovery</PackageId>
         <PackageProjectUrl>https://github.com/JasperFX/Baseline</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/JasperFX/Baseline/blob/master/LICENSE.txt</PackageLicenseUrl>
+        <PackageLicenseUrl>https://github.com/JasperFX/Baseline/blob/master/LICENSE</PackageLicenseUrl>
         <PackageIconUrl>https://raw.githubusercontent.com/JasperFx/baseline/master/documentation/content/images/baseline.png</PackageIconUrl>
         <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
         <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
